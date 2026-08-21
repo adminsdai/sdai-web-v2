@@ -69,6 +69,7 @@ jobs:
           SSH_HOST: ${{ secrets.HOSTINGER_HOST }}
           SSH_PORT: ${{ secrets.HOSTINGER_PORT }}
         run: |
+          set -e
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
 
