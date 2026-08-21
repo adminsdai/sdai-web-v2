@@ -8,8 +8,16 @@ require_once __DIR__ . '/db.php';
 
 class Auth {
     private static function getJwtSecret() {
-        Database::connect(); // Para asegurar que las variables de .env estén cargadas
-        return getenv('JWT_SECRET') ?: ($_ENV['JWT_SECRET'] ?? 'super-secret-fallback-key-change-me');
+        Database::connect(); // Carga variables desde .env
+
+        $secret = getenv('JWT_SECRET') ?: ($_ENV['JWT_SECRET'] ?? '');
+
+        if (empty($secret) || strlen($secret) < 32) {
+            error_log('[SDAI SECURITY] JWT_SECRET ausente o insuficiente.');
+            throw new RuntimeException('Configuración de seguridad incompleta.');
+        }
+
+        return $secret;
     }
 
     private static function base64UrlEncode($data) {
