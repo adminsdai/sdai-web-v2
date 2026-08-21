@@ -1,0 +1,69 @@
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// 1. Mensajes de Contacto y Consentimiento Ley 21.719 (Web Principal)
+model ContactMessage {
+  id                  Int      @id @default(autoincrement())
+  name                String   @db.VarChar(255)
+  email               String   @db.VarChar(255)
+  message             String   @db.Text
+  status              String   @default("PENDING") @db.VarChar(50) // PENDING, CONTACTED, ARCHIVED
+  consentGiven        Boolean  @default(false)
+  consentText         String?  @db.Text
+  policyVersion       String?  @db.VarChar(50)
+  ipAddress           String?  @db.VarChar(45)
+  userAgent           String?  @db.VarChar(500)
+  originUrl           String?  @db.VarChar(500)
+  consentTimestampUtc String?  @db.VarChar(30)
+  recordHash          String?  @db.VarChar(64)
+  createdAt           DateTime @default(now())
+
+  @@map("contact_messages")
+}
+
+// 2. Usuarios Autorizados (Escáner Ley 21.719)
+model AuthorizedUser {
+  userId             String              @id @map("user_id") @db.VarChar(255)
+  role               String              @default("admin") @db.VarChar(50)
+  createdAt          DateTime            @default(now()) @map("created_at")
+  consentLogs        ConsentLog[]
+  passkeyCredentials PasskeyCredential[]
+
+  @@map("authorized_users")
+}
+
+// 3. Bitácora Inmutable de Consentimiento y Auditoría (Escáner Ley 21.719)
+model ConsentLog {
+  id            String          @id @default(uuid()) @db.VarChar(36)
+  createdAt     DateTime        @default(now()) @map("created_at")
+  ipAnonymized  String          @map("ip_anonymized") @db.VarChar(255)
+  userAgent     String?         @map("user_agent") @db.Text
+  urlScanned    String          @map("url_scanned") @db.Text
+  action        String          @default("AGREED_TO_POLICIES") @db.VarChar(50)
+  userId        String?         @map("user_id") @db.VarChar(255)
+  policyVersion String          @default("v1.0") @map("policy_version") @db.VarChar(20)
+  user          AuthorizedUser? @relation(fields: [userId], references: [userId], onDelete: SetNull)
+
+  @@map("consent_logs")
+}
+
+// 4. Credenciales Passkeys - WebAuthn (Escáner Ley 21.719)
+model PasskeyCredential {
+  id           String         @id @default(uuid()) @db.VarChar(36)
+  createdAt    DateTime       @default(now()) @map("created_at")
+  credentialId String         @unique @map("credential_id") @db.VarChar(512)
+  publicKey    String         @map("public_key") @db.Text
+  counter      BigInt         @default(0)
+  transports   Json?
+  userId       String         @map("user_id") @db.VarChar(255)
+  user         AuthorizedUser @relation(fields: [userId], references: [userId], onDelete: Cascade)
+
+  @@index([userId], map: "idx_user_id")
+  @@map("passkey_credentials")
+}

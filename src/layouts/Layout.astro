@@ -1,0 +1,69 @@
+---
+interface Props { title: string; description?: string; }
+const { title, description = "Consultoría estratégica para gobernar la transformación regulatoria y tecnológica." } = Astro.props;
+---
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="description" content={description} />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#020617" />
+  <meta name="generator" content={Astro.generator} />
+  <title>{title}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <nav class="navbar glass">
+    <div class="container nav-container">
+      <a href="/" class="logo-lockup" aria-label="SDAI Chile — Inicio">
+        <img src="/brand/sdai-evolution-b_2.png" alt="SDAI Chile" class="nav-logo" />
+        <div class="wordmark"><strong>SDAI</strong><span>CHILE</span></div>
+      </a>
+      <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú" aria-expanded="false"><span></span><span></span><span></span></button>
+      <div class="nav-links" id="navLinks">
+        <a href="/#mirada">Nuestra Mirada</a>
+        <a href="/#capacidades">Capacidades</a>
+        <a href="/#framework">Framework</a>
+        <a href="/pyme">PYMES</a>
+        <a href="/scan" class="nav-scan">Evaluación</a>
+        <a href="/privacidad">Privacidad</a>
+        <a href="/#contacto" class="btn-nav">Contacto</a>
+      </div>
+    </div>
+  </nav>
+  <slot />
+  <footer class="footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <div class="footer-lockup"><img src="/brand/sdai-evolution-b_2.png" alt=""/><div><strong>SDAI</strong><span>CHILE</span></div></div>
+        <p>Consultoría estratégica para gobernar la transformación regulatoria y tecnológica.</p>
+        <small>Excelencia Auténtica y Responsable.</small>
+      </div>
+      <div class="footer-col"><b>Explorar</b><a href="/#mirada">Nuestra Mirada</a><a href="/#capacidades">Capacidades</a><a href="/#framework">SDAI Trust Framework™</a><a href="/pyme">Ruta Data Driven PYME</a></div>
+      <div class="footer-col"><b>Confianza</b><a href="/scan">Evaluación de Confianza Digital</a><a href="/privacidad">Privacidad</a><a href="/politica-de-privacidad">Política de Privacidad</a><a href="/terminos-y-condiciones">Términos y Condiciones</a></div>
+    </div>
+    <div class="container footer-bottom"><span>© 2026 SDAI CHILE SpA.</span><span>La confianza se gobierna.</span></div>
+  </footer>
+<script>
+  const menuToggle = document.getElementById('menuToggle');
+  const navLinks = document.getElementById('navLinks');
+  menuToggle?.addEventListener('click',()=>{const active=navLinks?.classList.toggle('active');menuToggle.classList.toggle('active');menuToggle.setAttribute('aria-expanded',String(Boolean(active)));});
+  document.querySelectorAll('.nav-links a').forEach(a=>a.addEventListener('click',()=>{navLinks?.classList.remove('active');menuToggle?.classList.remove('active');menuToggle?.setAttribute('aria-expanded','false');}));
+  const observer = new IntersectionObserver((entries)=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('reveal-active')}),{threshold:.08});
+  document.querySelectorAll('main section').forEach(el=>{el.classList.add('reveal');observer.observe(el)});
+</script>
+</body>
+</html>
+<style is:global>
+:root{--sdai-primary:#22bdf4;--sdai-blue:#2563eb;--sdai-gold:#d7a84b;--sdai-bg:#020617;--sdai-bg-soft:#061126;--sdai-text:#f8fafc;--sdai-text-dim:rgba(226,232,240,.72);--glass-bg:rgba(255,255,255,.035);--glass-border:rgba(148,163,184,.12);--glass-blur:blur(18px);--glass-shadow:0 16px 50px rgba(0,0,0,.32)}
+*{box-sizing:border-box}html{font-family:'Inter',sans-serif;background:var(--sdai-bg);scroll-behavior:smooth;overflow-x:hidden}body{margin:0;color:var(--sdai-text);background:var(--sdai-bg);-webkit-font-smoothing:antialiased;overflow-x:hidden}h1,h2,h3,h4{font-family:'Sora',sans-serif;margin:0}p{max-width:72ch;line-height:1.65}.container{max-width:1240px;margin:0 auto;padding:0 26px}section{padding:104px 0}.glass{background:var(--glass-bg);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);border:1px solid var(--glass-border);box-shadow:var(--glass-shadow)}
+.navbar{position:fixed;inset:0 0 auto 0;z-index:1000;padding:13px 0;border-width:0 0 1px;border-radius:0;background:rgba(2,6,23,.76)}.nav-container{display:flex;justify-content:space-between;align-items:center;gap:24px}.logo-lockup{display:flex;align-items:center;gap:11px;text-decoration:none;color:#fff}.nav-logo{width:46px;height:58px;object-fit:contain;filter:drop-shadow(0 0 10px rgba(34,189,244,.24))}.wordmark{display:flex;flex-direction:column;line-height:.9}.wordmark strong{font-family:'Sora';font-size:1.55rem;letter-spacing:.16em}.wordmark span{font-size:.58rem;letter-spacing:.48em;color:#cbd5e1;margin-top:8px}.nav-links{display:flex;align-items:center;gap:20px}.nav-links a{color:rgba(226,232,240,.72);text-decoration:none;font-size:.88rem;font-weight:600;transition:.2s}.nav-links a:hover{color:#fff}.nav-scan{color:#7dd3fc!important}.btn-nav{background:linear-gradient(135deg,#0ea5e9,#2563eb);color:#fff!important;padding:10px 18px;border-radius:999px}.menu-toggle{display:none;background:none;border:0;width:30px;height:22px;padding:0;flex-direction:column;justify-content:space-between}.menu-toggle span{height:2px;background:#38bdf8;width:100%;transition:.25s}
+.btn-premium{background:linear-gradient(135deg,#0ea5e9,#2563eb);color:#fff;padding:17px 30px;border-radius:999px;font-weight:800;text-decoration:none;display:inline-block;box-shadow:0 10px 28px rgba(37,99,235,.22);transition:.25s;border:0;cursor:pointer}.btn-premium:hover{transform:translateY(-2px);box-shadow:0 16px 36px rgba(37,99,235,.32)}
+.footer{padding:72px 0 28px;background:#01040d;border-top:1px solid rgba(148,163,184,.10)}.footer-grid{display:grid;grid-template-columns:1.3fr .7fr .7fr;gap:50px}.footer-lockup{display:flex;align-items:center;gap:12px;margin-bottom:20px}.footer-lockup img{width:44px;height:54px;object-fit:contain}.footer-lockup div{display:flex;flex-direction:column}.footer-lockup strong{font-family:'Sora';font-size:1.5rem;letter-spacing:.15em}.footer-lockup span{font-size:.58rem;letter-spacing:.42em;color:#94a3b8}.footer-brand p{color:#94a3b8;margin:0 0 14px}.footer-brand small{color:#d7a84b}.footer-col{display:flex;flex-direction:column;gap:12px}.footer-col b{font-size:.78rem;letter-spacing:.12em;color:#fff;margin-bottom:6px}.footer-col a{color:#94a3b8;text-decoration:none;font-size:.9rem}.footer-col a:hover{color:#38bdf8}.footer-bottom{display:flex;justify-content:space-between;gap:20px;margin-top:48px;padding-top:22px;border-top:1px solid rgba(148,163,184,.08);font-size:.78rem;color:#64748b}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .75s ease,transform .75s ease}.reveal-active{opacity:1;transform:none}
+@media(max-width:980px){.menu-toggle{display:flex}.nav-links{display:none;position:absolute;top:100%;left:0;right:0;flex-direction:column;align-items:stretch;padding:24px 26px 30px;background:rgba(2,6,23,.98);border-bottom:1px solid rgba(56,189,248,.13)}.nav-links.active{display:flex}.nav-links a{text-align:center;padding:7px}.menu-toggle.active span:nth-child(1){transform:translateY(10px) rotate(45deg)}.menu-toggle.active span:nth-child(2){opacity:0}.menu-toggle.active span:nth-child(3){transform:translateY(-10px) rotate(-45deg)}.footer-grid{grid-template-columns:1fr 1fr}.footer-brand{grid-column:1/-1}}
+@media(max-width:640px){.container{padding:0 20px}section{padding:76px 0}.wordmark strong{font-size:1.25rem}.nav-logo{width:38px;height:48px}.footer-grid{grid-template-columns:1fr}.footer-brand{grid-column:auto}.footer-bottom{flex-direction:column}}
+</style>

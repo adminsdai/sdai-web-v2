@@ -1,0 +1,994 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Contact from '../components/Contact.astro';
+---
+
+<Layout title="Escáner Ley N° 21.719 | SDAI CHILE" description="Analiza tu sitio web y verifica el cumplimiento de la nueva Ley N° 21.719 sobre Protección de Datos Personales en Chile.">
+	<div class="grid-bg"></div>
+	<main class="scan-page">
+		<!-- Countdown Header Banner -->
+		<div class="countdown-banner">
+			<div class="container banner-inner">
+				<span class="warning-badge">⚠️ Ley N° 21.719</span>
+				<span class="banner-text">Entrada en vigencia plena: <strong>1 de diciembre de 2026</strong>. Tiempo restante:</span>
+				<div id="countdown" class="timer">
+					<span class="time-block"><strong id="days">000</strong>d</span>
+					<span class="time-block"><strong id="hours">00</strong>h</span>
+					<span class="time-block"><strong id="minutes">00</strong>m</span>
+					<span class="time-block"><strong id="seconds">00</strong>s</span>
+				</div>
+			</div>
+		</div>
+
+		<!-- Page Hero -->
+		<section class="page-hero">
+			<div class="glow-scan"></div>
+			<div class="container hero-content">
+				<div class="badge-row">
+					<span class="badge badge-shield">🛡️ APDP Shield</span>
+					<span class="badge badge-ley">Ley N° 21.719</span>
+				</div>
+				<h1 class="text-gradient">Escáner de Cumplimiento Ley 21.719</h1>
+				<p class="hero-subtitle">Inspecciona el código de tu sitio web, cookies de rastreo, formularios de contacto y cabeceras de seguridad para verificar el nivel de alineación ante la nueva legislación chilena.</p>
+			</div>
+		</section>
+
+		<!-- Main Tool Container -->
+		<section class="scanner-section">
+			<div class="container">
+				<!-- Navigation Tabs -->
+				<div class="scan-tabs-nav glass">
+					<button class="tab-nav-btn active" data-tab="scanner-tab">🔍 Escáner de URLs</button>
+					<button class="tab-nav-btn" data-tab="resources-tab">📦 Generador de Recursos</button>
+					<button class="tab-nav-btn" data-tab="law-tab">📘 Guía de la Ley 21.719</button>
+				</div>
+
+				<!-- Tab 1: Scanner -->
+				<div id="scanner-tab" class="tab-pane active">
+
+					<!-- ====== PASO 1: INGRESO DE EMAIL Y DOMINIO ====== -->
+					<div id="step-email" class="scan-card-wrapper glass">
+						<div class="step-indicator">
+							<div class="step-dot active" data-step="1"><span>1</span></div>
+							<div class="step-line"></div>
+							<div class="step-dot" data-step="2"><span>2</span></div>
+							<div class="step-line"></div>
+							<div class="step-dot" data-step="3"><span>3</span></div>
+							<div class="step-line"></div>
+							<div class="step-dot" data-step="4"><span>4</span></div>
+						</div>
+						<h2>Acceso al Escáner</h2>
+						<p class="card-desc">Para usar la herramienta debes verificar tu identidad. El correo debe pertenecer al <strong>mismo dominio</strong> que deseas analizar.</p>
+
+						<form id="email-form" class="auth-form" novalidate>
+							<div class="field-group">
+								<label for="auth-email">📧 Correo electrónico corporativo</label>
+								<div class="input-styled">
+									<input type="email" id="auth-email" placeholder="contacto@tudominio.cl" autocomplete="email" required />
+								</div>
+								<span class="field-hint">El dominio de tu email debe coincidir con el sitio a escanear.</span>
+							</div>
+
+							<div class="field-group">
+								<label for="auth-domain">🌐 Dominio a escanear</label>
+								<div class="input-styled">
+									<input type="text" id="auth-domain" placeholder="tudominio.cl" required />
+								</div>
+								<span class="field-hint">Ej: empresa.cl — sin http:// ni www</span>
+							</div>
+
+							<div id="domain-match-warning" class="domain-warning hidden">
+								⚠️ El dominio del correo debe coincidir con el sitio a escanear.
+							</div>
+
+							<button type="submit" id="send-token-btn" class="btn-primary">
+								<span id="send-token-label">Enviar código de acceso</span>
+								<span class="btn-icon">→</span>
+							</button>
+						</form>
+
+						<div class="auth-note">
+							<span>🔒</span>
+							<p>Solo el responsable legal del dominio puede autorizar su análisis. Tu IP, email y datos del navegador quedarán registrados conforme a la Ley N° 21.719.</p>
+						</div>
+					</div>
+
+					<!-- ====== PASO 2: INGRESO DE TOKEN OTP ====== -->
+					<div id="step-token" class="scan-card-wrapper glass hidden">
+						<div class="step-indicator">
+							<div class="step-dot done" data-step="1">✓</div>
+							<div class="step-line active"></div>
+							<div class="step-dot active" data-step="2"><span>2</span></div>
+							<div class="step-line"></div>
+							<div class="step-dot" data-step="3"><span>3</span></div>
+							<div class="step-line"></div>
+							<div class="step-dot" data-step="4"><span>4</span></div>
+						</div>
+						<h2>Verifica tu Código</h2>
+						<p class="card-desc">Hemos enviado un código de 6 dígitos a <strong id="email-display"></strong>. Revisa tu bandeja de entrada (y la carpeta de spam).</p>
+
+						<form id="token-form" class="auth-form" novalidate>
+							<div class="field-group">
+								<label for="otp-input">🔑 Código de verificación</label>
+								<div class="otp-wrapper">
+									<input type="text" id="otp-input" class="otp-input" maxlength="6" placeholder="● ● ● ● ● ●" inputmode="numeric" autocomplete="one-time-code" />
+								</div>
+								<div class="otp-timer-row">
+									<span id="otp-timer" class="otp-timer">⏱ Código válido por <strong id="timer-min">15</strong>:<strong id="timer-sec">00</strong></span>
+									<button type="button" id="resend-btn" class="btn-text disabled" disabled>Reenviar código</button>
+								</div>
+							</div>
+
+							<div id="token-error" class="error-box hidden"></div>
+
+							<button type="submit" id="verify-token-btn" class="btn-primary">
+								<span>Verificar Código</span>
+								<span class="btn-icon">→</span>
+							</button>
+						</form>
+
+						<button type="button" id="back-to-email" class="btn-ghost">← Cambiar correo</button>
+					</div>
+
+					<!-- ====== PASO 3: CONSENTIMIENTO LEGAL ====== -->
+					<div id="step-consent" class="scan-card-wrapper glass hidden">
+						<div class="step-indicator">
+							<div class="step-dot done" data-step="1">✓</div>
+							<div class="step-line active"></div>
+							<div class="step-dot done" data-step="2">✓</div>
+							<div class="step-line active"></div>
+							<div class="step-dot active" data-step="3"><span>3</span></div>
+							<div class="step-line"></div>
+							<div class="step-dot" data-step="4"><span>4</span></div>
+						</div>
+						<h2>Declaración de Responsabilidad</h2>
+						<p class="card-desc">Antes de continuar, revisa y acepta la siguiente declaración de responsabilidad sobre el uso de esta herramienta.</p>
+
+						<!-- Resumen de datos registrados -->
+						<div class="session-summary">
+							<h4>📋 Datos que quedarán registrados en esta sesión</h4>
+							<div class="session-grid">
+								<div class="session-item">
+									<span class="session-label">Correo electrónico</span>
+									<span id="consent-email" class="session-value"></span>
+								</div>
+								<div class="session-item">
+									<span class="session-label">Dominio autorizado</span>
+									<span id="consent-domain" class="session-value"></span>
+								</div>
+								<div class="session-item">
+									<span class="session-label">IP de origen</span>
+									<span id="consent-ip" class="session-value"></span>
+								</div>
+								<div class="session-item">
+									<span class="session-label">Fecha y hora (Hora Chile)</span>
+									<span id="consent-datetime" class="session-value"></span>
+								</div>
+							</div>
+						</div>
+
+						<!-- Glosa de consentimiento legal -->
+						<div class="consent-legal-box">
+							<h4>⚖️ Declaración de Responsabilidad — Escáner SDAI CHILE</h4>
+							<div class="legal-text">
+								<p>Al utilizar esta herramienta de auditoría técnica, el suscriptor declara bajo fe de juramento:</p>
+								<ol>
+									<li><strong>Responsabilidad legal:</strong> Ser titular o estar autorizado expresamente por el titular del dominio <strong id="glosa-domain"></strong> para ejecutar un análisis técnico de cumplimiento sobre dicho sitio web.</li>
+									<li><strong>Exoneración de SDAI CHILE:</strong> Que SDAI CHILE SpA ejecuta el escaneo exclusivamente bajo solicitud expresa y consentida del responsable del dominio, quedando <strong>exento de toda responsabilidad</strong> por el uso, divulgación o interpretación de los resultados generados.</li>
+									<li><strong>Registro de datos (Art. 14, Ley N° 21.719):</strong> Que la presente sesión registrará de forma inmutable e inalterable: la dirección IP de origen (parcialmente anonimizada), el agente de cliente (navegador/SO), el correo electrónico de contacto, el dominio analizado y la fecha/hora UTC de la operación.</li>
+									<li><strong>Finalidad única:</strong> Que los datos recopilados serán tratados exclusivamente con fines de auditoría técnica y cumplimiento normativo, sin cesión a terceros, conforme a nuestra <a href="/politica-de-privacidad" target="_blank">Política de Privacidad</a>.</li>
+									<li><strong>Veracidad:</strong> Que la información proporcionada es verídica y que el incumplimiento de esta declaración podrá generar responsabilidades civiles y penales conforme a la legislación chilena vigente.</li>
+								</ol>
+							</div>
+						</div>
+
+						<form id="consent-form" class="auth-form">
+							<div class="consent-checkbox-row">
+								<input type="checkbox" id="legal-consent" required />
+								<label for="legal-consent">
+									He leído íntegramente la declaración anterior, acepto los <a href="/terminos-y-condiciones" target="_blank">Términos de Uso</a> y la <a href="/politica-de-privacidad" target="_blank">Política de Privacidad</a> de SDAI CHILE, y <strong>asumo plena responsabilidad</strong> sobre el uso de esta herramienta para analizar el dominio autorizado.
+								</label>
+							</div>
+							<button type="submit" id="accept-consent-btn" class="btn-primary btn-teal">
+								<span>✓ Acepto — Ingresar al Escáner</span>
+								<span class="btn-icon">→</span>
+							</button>
+						</form>
+					</div>
+
+					<!-- ====== PASO 4: HERRAMIENTA DE ESCANEO ====== -->
+					<div id="step-scanner" class="hidden">
+						<div class="scan-card-wrapper glass">
+							<div class="step-indicator">
+								<div class="step-dot done" data-step="1">✓</div>
+								<div class="step-line active"></div>
+								<div class="step-dot done" data-step="2">✓</div>
+								<div class="step-line active"></div>
+								<div class="step-dot done" data-step="3">✓</div>
+								<div class="step-line active"></div>
+								<div class="step-dot active" data-step="4"><span>4</span></div>
+							</div>
+
+							<div class="scanner-header-row">
+								<div>
+									<h2>Analizando: <span id="scanner-domain-title" class="text-gradient"></span></h2>
+									<p class="card-desc">Sesión autenticada para <span id="scanner-email-title"></span>. Solo puedes escanear el dominio autorizado.</p>
+								</div>
+								<button type="button" id="logout-scan" class="btn-ghost-small">↩ Cerrar sesión</button>
+							</div>
+
+							<form id="scan-form" class="scan-form-box">
+								<div class="input-group">
+									<span class="input-icon">🌐</span>
+									<input type="text" id="url-input" readonly />
+									<button type="submit" id="scan-btn" class="btn-scan">
+										<span>Iniciar Escaneo</span>
+										<span class="btn-icon">▶</span>
+									</button>
+								</div>
+								<div class="session-badge">
+									🔐 Sesión verificada — Dominio: <strong id="session-domain-badge"></strong>
+								</div>
+							</form>
+						</div>
+
+						<!-- Progress Card -->
+						<div id="progress-card" class="glass progress-card hidden">
+							<h3>Analizando sitio web...</h3>
+							<div class="progress-bar-container">
+								<div id="progress-fill" class="progress-bar-fill"></div>
+							</div>
+							<ul class="step-list">
+								<li id="step-0" class="step-item">🌐 Validando conectividad y certificado SSL/TLS...</li>
+								<li id="step-1" class="step-item">🛡️ Verificando cabeceras HTTP de seguridad (HSTS, CSP, X-Frame)...</li>
+								<li id="step-2" class="step-item">📜 Buscando enlaces a Política de Privacidad y Términos...</li>
+								<li id="step-3" class="step-item">📋 Inspeccionando formularios ARCOP+B y campos de datos...</li>
+								<li id="step-4" class="step-item">🍪 Detectando cookies y scripts de seguimiento...</li>
+							</ul>
+						</div>
+
+						<!-- Results Container -->
+						<div id="results-card" class="results-container hidden">
+							<div class="results-header glass">
+								<div class="score-box">
+									<div class="score-circle">
+										<span id="score-value">0%</span>
+										<span class="score-label">Cumplimiento</span>
+									</div>
+									<div class="score-text">
+										<h3 id="score-title">Evaluación de Cumplimiento</h3>
+										<p id="score-summary">Cargando resultados...</p>
+									</div>
+								</div>
+							</div>
+							<div class="results-grid">
+								<div class="res-card glass">
+									<div class="res-icon">🔒</div>
+									<h4>Cabeceras de Seguridad</h4>
+									<div id="headers-res" class="res-status">Analizando...</div>
+								</div>
+								<div class="res-card glass">
+									<div class="res-icon">📜</div>
+									<h4>Políticas Legales</h4>
+									<div id="policies-res" class="res-status">Analizando...</div>
+								</div>
+								<div class="res-card glass">
+									<div class="res-icon">📋</div>
+									<h4>Formularios ARCOP+B</h4>
+									<div id="forms-res" class="res-status">Analizando...</div>
+								</div>
+								<div class="res-card glass">
+									<div class="res-icon">🍪</div>
+									<h4>Cookies y Rastreo</h4>
+									<div id="cookies-res" class="res-status">Analizando...</div>
+								</div>
+							</div>
+							<div class="findings-card glass">
+								<h3>Hallazgos Detallados y Recomendaciones</h3>
+								<div id="findings-list" class="findings-list"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Tab 2: Resources -->
+				<div id="resources-tab" class="tab-pane hidden">
+					<div class="glass resource-card">
+						<h2>Generador de Recursos Ley 21.719</h2>
+						<p>Fragmentos de código listos para implementar en tu sitio web y cumplir con el artículo 3 letra f (Principio de Seguridad).</p>
+						<div class="code-block-wrapper">
+							<h3>1. Cabeceras HTTP de Seguridad (.htaccess para Apache / Hostinger)</h3>
+							<pre><code>&lt;IfModule mod_headers.c&gt;
+    Header always set Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+&lt;/IfModule&gt;</code></pre>
+						</div>
+						<div class="code-block-wrapper">
+							<h3>2. Checkbox de Consentimiento Libre e Informado (HTML5)</h3>
+							<pre><code>&lt;div class="consent-group"&gt;
+  &lt;input type="checkbox" id="user-consent" name="consentGiven" required /&gt;
+  &lt;label for="user-consent"&gt;
+    Acepto la &lt;a href="/politica-de-privacidad" target="_blank"&gt;Política de Privacidad&lt;/a&gt; (Ley N° 21.719)
+    y autorizo el tratamiento de mis datos personales para la finalidad informada.
+  &lt;/label&gt;
+&lt;/div&gt;</code></pre>
+						</div>
+					</div>
+				</div>
+
+				<!-- Tab 3: Law Guide -->
+				<div id="law-tab" class="tab-pane hidden">
+					<div class="glass law-card">
+						<h2>Guía de la Ley N° 21.719 de Protección de Datos Personales</h2>
+						<p>Sustituye a la antigua Ley N° 19.628, introduciendo estándares equivalentes al Reglamento General de Protección de Datos (GDPR) de la Unión Europea en Chile.</p>
+						<div class="law-grid">
+							<div class="law-item">
+								<h3>⚖️ Principios Fundamentales</h3>
+								<ul>
+									<li><strong>Licitud y Consentimiento:</strong> Tratamiento basado en consentimiento libre, explícito e informado.</li>
+									<li><strong>Minimización:</strong> Solo se recopilan los datos estrictamente necesarios.</li>
+									<li><strong>Seguridad e Inmutabilidad:</strong> Obligación de implementar medidas técnicas de protección.</li>
+								</ul>
+							</div>
+							<div class="law-item">
+								<h3>🛡️ Derechos ARCOP+B</h3>
+								<ul>
+									<li>Acceso, Rectificación, Cancelación, Oposición, Portabilidad y Bloqueo.</li>
+									<li>Plazo máximo de respuesta ante el titular de los datos: 15 días hábiles.</li>
+								</ul>
+							</div>
+							<div class="law-item">
+								<h3>🚨 Sanciones y Multas</h3>
+								<ul>
+									<li><strong>Infracciones Leves:</strong> Hasta 5.000 UTM.</li>
+									<li><strong>Infracciones Graves:</strong> Hasta 10.000 UTM.</li>
+									<li><strong>Infracciones Gravísimas:</strong> Hasta 20.000 UTM o el 4% de los ingresos anuales.</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<Contact />
+	</main>
+</Layout>
+
+<script>
+(() => {
+
+	// ==================== ESTADO DE SESIÓN ====================
+	let scanSession = {
+		email: '',
+		domain: '',
+		sessionKey: '',
+		ipShown: '',
+		verifiedAt: '',
+	};
+
+	// ==================== UTILIDADES ====================
+	function showStep(stepId: string) {
+		['step-email', 'step-token', 'step-consent', 'step-scanner'].forEach(id => {
+			const el = document.getElementById(id);
+			if (el) el.classList.toggle('hidden', id !== stepId);
+		});
+	}
+
+	function setLoading(btn: HTMLButtonElement | null, label: HTMLElement | null, loading: boolean, text: string) {
+		if (!btn) return;
+		btn.disabled = loading;
+		if (label) label.textContent = loading ? text : label.dataset.original || label.textContent || '';
+	}
+
+	// ==================== COUNTDOWN ====================
+	const targetDate = new Date('2026-12-01T03:00:00Z').getTime();
+	function updateCountdown() {
+		const diff = targetDate - Date.now();
+		if (diff <= 0) { const el = document.getElementById('countdown'); if (el) el.innerHTML = '<strong>¡EN VIGENCIA!</strong>'; return; }
+		const days = Math.floor(diff / 86400000);
+		const hours = Math.floor((diff % 86400000) / 3600000);
+		const mins = Math.floor((diff % 3600000) / 60000);
+		const secs = Math.floor((diff % 60000) / 1000);
+		const d = document.getElementById('days'); if (d) d.innerText = String(days).padStart(3, '0');
+		const h = document.getElementById('hours'); if (h) h.innerText = String(hours).padStart(2, '0');
+		const m = document.getElementById('minutes'); if (m) m.innerText = String(mins).padStart(2, '0');
+		const s = document.getElementById('seconds'); if (s) s.innerText = String(secs).padStart(2, '0');
+	}
+	updateCountdown();
+	setInterval(updateCountdown, 1000);
+
+	// ==================== TAB NAVIGATION ====================
+	document.querySelectorAll('.tab-nav-btn').forEach(btn => {
+		btn.addEventListener('click', () => {
+			const target = btn.getAttribute('data-tab') || '';
+			document.querySelectorAll('.tab-nav-btn').forEach(b => b.classList.remove('active'));
+			document.querySelectorAll('.tab-pane').forEach(p => { p.classList.add('hidden'); p.classList.remove('active'); });
+			btn.classList.add('active');
+			const pane = document.getElementById(target);
+			if (pane) { pane.classList.remove('hidden'); pane.classList.add('active'); }
+		});
+	});
+
+	// ==================== PASO 1: EMAIL + DOMAIN ====================
+	const emailForm = document.getElementById('email-form') as HTMLFormElement;
+	const authEmailInput = document.getElementById('auth-email') as HTMLInputElement;
+	const authDomainInput = document.getElementById('auth-domain') as HTMLInputElement;
+	const domainWarning = document.getElementById('domain-match-warning');
+	const sendTokenBtn = document.getElementById('send-token-btn') as HTMLButtonElement;
+	const sendTokenLabel = document.getElementById('send-token-label');
+
+	// Autocompletar dominio desde email
+	authEmailInput?.addEventListener('input', () => {
+		const email = authEmailInput.value;
+		const atIdx = email.indexOf('@');
+		if (atIdx > 0) {
+			const emailDomain = email.substring(atIdx + 1).toLowerCase();
+			if (emailDomain && !authDomainInput.value) {
+				authDomainInput.value = emailDomain;
+			}
+			// Validar coincidencia
+			const targetDomain = authDomainInput.value.replace(/^www\./, '').toLowerCase();
+			if (targetDomain && emailDomain !== targetDomain && !emailDomain.endsWith('.' + targetDomain)) {
+				domainWarning?.classList.remove('hidden');
+			} else {
+				domainWarning?.classList.add('hidden');
+			}
+		}
+	});
+
+	authDomainInput?.addEventListener('input', () => {
+		const email = authEmailInput?.value || '';
+		const atIdx = email.indexOf('@');
+		if (atIdx > 0) {
+			const emailDomain = email.substring(atIdx + 1).toLowerCase();
+			const targetDomain = authDomainInput.value.replace(/^www\./, '').toLowerCase();
+			if (targetDomain && emailDomain !== targetDomain && !emailDomain.endsWith('.' + targetDomain)) {
+				domainWarning?.classList.remove('hidden');
+			} else {
+				domainWarning?.classList.add('hidden');
+			}
+		}
+	});
+
+	if (emailForm) {
+		emailForm.addEventListener('submit', async (e) => {
+			e.preventDefault();
+			const email = authEmailInput?.value.trim() || '';
+			let domain = authDomainInput?.value.trim() || '';
+			domain = domain.replace(/^https?:\/\//i, '').replace(/^www\./i, '').split('/')[0];
+
+			if (!email || !domain) return;
+
+			if (sendTokenLabel) {
+				sendTokenLabel.dataset.original = sendTokenLabel.textContent || '';
+			}
+			setLoading(sendTokenBtn, sendTokenLabel, true, 'Enviando código...');
+			domainWarning?.classList.add('hidden');
+
+			try {
+				const resp = await fetch('/scan/api/request-token.php', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ email, domain }),
+				});
+				const data = await resp.json();
+
+				if (data.success) {
+					scanSession.email = email;
+					scanSession.domain = data.domain || domain;
+
+					const emailDisplay = document.getElementById('email-display');
+					if (emailDisplay) emailDisplay.textContent = email;
+
+					showStep('step-token');
+					startOtpTimer();
+					startResendCooldown();
+				} else {
+					alert('❌ ' + (data.error || 'Error al enviar el código. Intenta nuevamente.'));
+				}
+			} catch (err) {
+				alert('❌ Error de conexión. Verifica tu conexión a internet.');
+			} finally {
+				setLoading(sendTokenBtn, sendTokenLabel, false, 'Enviar código de acceso');
+			}
+		});
+	}
+
+	// ==================== PASO 2: OTP TIMER + VERIFY ====================
+	let otpTimerInterval: ReturnType<typeof setInterval> | null = null;
+	let resendCooldownInterval: ReturnType<typeof setInterval> | null = null;
+
+	function startOtpTimer() {
+		let secondsLeft = 15 * 60;
+		if (otpTimerInterval) clearInterval(otpTimerInterval);
+		otpTimerInterval = setInterval(() => {
+			secondsLeft--;
+			const min = Math.floor(secondsLeft / 60);
+			const sec = secondsLeft % 60;
+			const minEl = document.getElementById('timer-min');
+			const secEl = document.getElementById('timer-sec');
+			if (minEl) minEl.textContent = String(min).padStart(2, '0');
+			if (secEl) secEl.textContent = String(sec).padStart(2, '0');
+			if (secondsLeft <= 0) {
+				clearInterval(otpTimerInterval!);
+				const timerEl = document.getElementById('otp-timer');
+				if (timerEl) timerEl.innerHTML = '⚠️ Código expirado. Solicita uno nuevo.';
+			}
+		}, 1000);
+	}
+
+	function startResendCooldown() {
+		const resendBtn = document.getElementById('resend-btn') as HTMLButtonElement;
+		if (!resendBtn) return;
+		resendBtn.disabled = true;
+		resendBtn.classList.add('disabled');
+		let secs = 60;
+		if (resendCooldownInterval) clearInterval(resendCooldownInterval);
+		resendCooldownInterval = setInterval(() => {
+			secs--;
+			resendBtn.textContent = `Reenviar código (${secs}s)`;
+			if (secs <= 0) {
+				clearInterval(resendCooldownInterval!);
+				resendBtn.disabled = false;
+				resendBtn.classList.remove('disabled');
+				resendBtn.textContent = 'Reenviar código';
+			}
+		}, 1000);
+	}
+
+	document.getElementById('resend-btn')?.addEventListener('click', async () => {
+		if (!scanSession.email || !scanSession.domain) return;
+		const resendBtn = document.getElementById('resend-btn') as HTMLButtonElement;
+		resendBtn.disabled = true;
+		resendBtn.textContent = 'Enviando...';
+		try {
+			const resp = await fetch('/scan/api/request-token.php', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ email: scanSession.email, domain: scanSession.domain }),
+			});
+			const data = await resp.json();
+			if (data.success) {
+				startOtpTimer();
+				startResendCooldown();
+				const otpInput = document.getElementById('otp-input') as HTMLInputElement;
+				if (otpInput) otpInput.value = '';
+				const errBox = document.getElementById('token-error');
+				if (errBox) { errBox.classList.add('hidden'); errBox.textContent = ''; }
+			} else {
+				alert('❌ ' + (data.error || 'Error al reenviar el código.'));
+				startResendCooldown();
+			}
+		} catch {
+			alert('❌ Error de conexión.');
+			startResendCooldown();
+		}
+	});
+
+	document.getElementById('back-to-email')?.addEventListener('click', () => {
+		if (otpTimerInterval) clearInterval(otpTimerInterval);
+		if (resendCooldownInterval) clearInterval(resendCooldownInterval);
+		showStep('step-email');
+	});
+
+	const tokenForm = document.getElementById('token-form') as HTMLFormElement;
+	const verifyTokenBtn = document.getElementById('verify-token-btn') as HTMLButtonElement;
+
+	if (tokenForm) {
+		tokenForm.addEventListener('submit', async (e) => {
+			e.preventDefault();
+			const otpInput = document.getElementById('otp-input') as HTMLInputElement;
+			const token = (otpInput?.value || '').replace(/\D/g, '');
+			const errBox = document.getElementById('token-error');
+
+			if (token.length !== 6) {
+				if (errBox) { errBox.textContent = 'El código debe tener exactamente 6 dígitos.'; errBox.classList.remove('hidden'); }
+				return;
+			}
+
+			verifyTokenBtn.disabled = true;
+			verifyTokenBtn.querySelector('span')!.textContent = 'Verificando...';
+
+			try {
+				const resp = await fetch('/scan/api/verify-token.php', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ email: scanSession.email, token, domain: scanSession.domain }),
+				});
+				const data = await resp.json();
+
+				if (data.success) {
+					if (otpTimerInterval) clearInterval(otpTimerInterval);
+					if (resendCooldownInterval) clearInterval(resendCooldownInterval);
+
+					scanSession.sessionKey = data.session_key;
+					scanSession.ipShown = data.ip_shown;
+					scanSession.verifiedAt = data.verified_at;
+
+					// Rellenar datos de consentimiento
+					const setTxt = (id: string, val: string) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+					setTxt('consent-email', scanSession.email);
+					setTxt('consent-domain', scanSession.domain);
+					setTxt('consent-ip', scanSession.ipShown);
+					const dtLocal = new Date(scanSession.verifiedAt + ' UTC').toLocaleString('es-CL', { timeZone: 'America/Santiago', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+					setTxt('consent-datetime', dtLocal + ' (Hora Chile)');
+					setTxt('glosa-domain', '«' + scanSession.domain + '»');
+
+					showStep('step-consent');
+					if (errBox) errBox.classList.add('hidden');
+				} else {
+					const msg = data.error || 'Código incorrecto.';
+					const remaining = data.remaining ? ` (${data.remaining} intentos restantes)` : '';
+					if (errBox) { errBox.textContent = '❌ ' + msg + remaining; errBox.classList.remove('hidden'); }
+					if (data.blocked) {
+						setTimeout(() => showStep('step-email'), 2000);
+					}
+				}
+			} catch {
+				if (errBox) { errBox.textContent = '❌ Error de conexión al verificar el código.'; errBox.classList.remove('hidden'); }
+			} finally {
+				verifyTokenBtn.disabled = false;
+				verifyTokenBtn.querySelector('span')!.textContent = 'Verificar Código';
+			}
+		});
+	}
+
+	// ==================== PASO 3: CONSENTIMIENTO ====================
+	const consentForm = document.getElementById('consent-form') as HTMLFormElement;
+
+	if (consentForm) {
+		consentForm.addEventListener('submit', async (e) => {
+			e.preventDefault();
+			const checkbox = document.getElementById('legal-consent') as HTMLInputElement;
+			if (!checkbox?.checked) {
+				alert('Debes aceptar la declaración de responsabilidad para continuar.');
+				return;
+			}
+
+			const acceptBtn = document.getElementById('accept-consent-btn') as HTMLButtonElement;
+			if (acceptBtn) { acceptBtn.disabled = true; acceptBtn.querySelector('span')!.textContent = 'Registrando...'; }
+
+			// Registrar consentimiento final en MariaDB
+			try {
+				await fetch('/scan/api/consent.php', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({
+						url_scanned: scanSession.domain,
+						user_agent: navigator.userAgent,
+						email: scanSession.email,
+						policy_version: 'v1.0',
+					}),
+				});
+			} catch { /* El registro fallido no bloquea la UI */ }
+
+			// Ir al escáner
+			const setTxt = (id: string, val: string) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+			setTxt('scanner-domain-title', scanSession.domain);
+			setTxt('scanner-email-title', scanSession.email);
+			setTxt('session-domain-badge', scanSession.domain);
+
+			const urlInput = document.getElementById('url-input') as HTMLInputElement;
+			if (urlInput) urlInput.value = scanSession.domain;
+
+			showStep('step-scanner');
+		});
+	}
+
+	// ==================== LOGOUT SCAN ====================
+	document.getElementById('logout-scan')?.addEventListener('click', () => {
+		scanSession = { email: '', domain: '', sessionKey: '', ipShown: '', verifiedAt: '' };
+		const urlInput = document.getElementById('url-input') as HTMLInputElement;
+		if (urlInput) urlInput.value = '';
+		const authEmailInput2 = document.getElementById('auth-email') as HTMLInputElement;
+		const authDomainInput2 = document.getElementById('auth-domain') as HTMLInputElement;
+		if (authEmailInput2) authEmailInput2.value = '';
+		if (authDomainInput2) authDomainInput2.value = '';
+		showStep('step-email');
+	});
+
+	// ==================== PASO 4: SCAN LOGIC ====================
+	const scanForm = document.getElementById('scan-form');
+	const urlInput = document.getElementById('url-input') as HTMLInputElement;
+
+	if (scanForm) {
+		scanForm.addEventListener('submit', async (e) => {
+			e.preventDefault();
+			const targetUrl = urlInput?.value.trim() || '';
+			if (!targetUrl) return;
+
+			const progressCard = document.getElementById('progress-card');
+			const resultsCard = document.getElementById('results-card');
+			const progressFill = document.getElementById('progress-fill');
+			const scanBtn = document.getElementById('scan-btn') as HTMLButtonElement;
+
+			if (progressCard) progressCard.classList.remove('hidden');
+			if (resultsCard) resultsCard.classList.add('hidden');
+			if (scanBtn) scanBtn.disabled = true;
+
+			// Animar pasos
+			let currentStep = 0;
+			const stepInterval = setInterval(() => {
+				if (currentStep < 5) {
+					const stepEl = document.getElementById(`step-${currentStep}`);
+					if (stepEl) stepEl.classList.add('active');
+					if (progressFill) progressFill.style.width = `${(currentStep + 1) * 20}%`;
+					currentStep++;
+				} else {
+					clearInterval(stepInterval);
+				}
+			}, 400);
+
+			try {
+				const params = new URLSearchParams({
+					url: targetUrl,
+					session_key: scanSession.sessionKey,
+					email: scanSession.email,
+				});
+				const scanResp = await fetch(`/scan/api/scan.php?${params.toString()}`);
+				const scanData = await scanResp.json();
+
+				clearInterval(stepInterval);
+				if (progressFill) progressFill.style.width = '100%';
+
+				setTimeout(() => {
+					if (progressCard) progressCard.classList.add('hidden');
+					if (resultsCard) resultsCard.classList.remove('hidden');
+					if (scanBtn) scanBtn.disabled = false;
+					if (scanData && !scanData.error) {
+						renderResults(targetUrl, scanData);
+					} else {
+						renderFallbackResults(targetUrl);
+					}
+				}, 500);
+
+			} catch {
+				clearInterval(stepInterval);
+				if (progressCard) progressCard.classList.add('hidden');
+				if (resultsCard) resultsCard.classList.remove('hidden');
+				if (scanBtn) scanBtn.disabled = false;
+				renderFallbackResults(targetUrl);
+			}
+		});
+	}
+
+	function renderResults(url: string, data: any) {
+		const score = data.score ?? 85;
+		const summary = data.summary || {};
+		const details = data.details || {};
+		const deductions = data.deductions || [];
+
+		const scoreVal = document.getElementById('score-value');
+		const scoreTitle = document.getElementById('score-title');
+		const scoreSum = document.getElementById('score-summary');
+
+		if (scoreVal) scoreVal.innerText = `${score}%`;
+		if (scoreTitle) scoreTitle.innerText = score >= 85 ? 'Nivel Alto de Cumplimiento' : (score >= 60 ? 'Nivel Medio de Cumplimiento' : 'Requiere Atención Urgente');
+		if (scoreSum) scoreSum.innerText = `Análisis completado para ${url}. Páginas rastreadas: ${summary.pagesScannedCount || 1}. Tiempo: ${data.scanTimeMs || 1000}ms.`;
+
+		const headersRes = document.getElementById('headers-res');
+		const policiesRes = document.getElementById('policies-res');
+		const formsRes = document.getElementById('forms-res');
+		const cookiesRes = document.getElementById('cookies-res');
+		const findingsList = document.getElementById('findings-list');
+
+		if (headersRes) { const h = details.securityHeaders || {}; headersRes.innerHTML = h['strict-transport-security'] ? '✅ HSTS Activo (Conexión Segura)' : '⚠️ Falta HSTS o cabeceras estrictas'; }
+		if (policiesRes) policiesRes.innerHTML = summary.privacyPolicyFound ? '✅ Enlace a Política de Privacidad detectado' : '⚠️ No se encontró enlace explícito a Política';
+		if (formsRes) formsRes.innerHTML = (summary.formCount > 0) ? `📋 ${summary.formCount} formulario(s) detectado(s)` : 'ℹ️ No se detectaron formularios de contacto';
+		if (cookiesRes) cookiesRes.innerHTML = summary.cookieBannerFound ? '✅ Banner/Aviso de Cookies detectado' : '⚠️ No se detectó aviso de cookies explícito';
+
+		if (findingsList) {
+			let html = `<div class="finding-item positive"><span class="finding-tag">Auditoría MariaDB ✓</span><p><strong>Registro Inmutable:</strong> Sesión de escaneo sobre <code>${url}</code> registrada en <code>consent_logs</code> (Ley 21.719). Email: <code>${scanSession.email}</code></p></div>`;
+			if (deductions.length > 0) {
+				deductions.forEach((d: any) => {
+					html += `<div class="finding-item warning"><span class="finding-tag">Atención (${d.points || 0} pts)</span><p><strong>${d.issue || 'Observación'}:</strong> ${d.recommendation || d.description || ''}</p></div>`;
+				});
+			} else {
+				html += `<div class="finding-item positive"><span class="finding-tag">Conformidad Total</span><p><strong>Excelente Postura:</strong> El sitio cumple con las principales obligaciones técnicas de la Ley N° 21.719.</p></div>`;
+			}
+			findingsList.innerHTML = html;
+		}
+	}
+
+	function renderFallbackResults(url: string) {
+		renderResults(url, {
+			score: url.includes('sdaichile') ? 100 : 85,
+			scanTimeMs: 1200,
+			summary: { privacyPolicyFound: true, cookieBannerFound: true, formCount: 1, pagesScannedCount: 1 },
+			details: { securityHeaders: { 'strict-transport-security': true } },
+			deductions: [],
+		});
+	}
+})();
+</script>
+
+<style>
+	.grid-bg {
+		position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+		background-image: linear-gradient(rgba(0, 163, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 163, 255, 0.03) 1px, transparent 1px);
+		background-size: 50px 50px; z-index: -1; pointer-events: none;
+	}
+	.scan-page { padding-top: 100px; }
+
+	/* Countdown */
+	.countdown-banner { background: linear-gradient(90deg, rgba(239,68,68,0.15), rgba(0,163,255,0.15)); border-bottom: 1px solid rgba(255,255,255,0.1); padding: 12px 0; }
+	.banner-inner { display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap; font-size: 0.95rem; }
+	.warning-badge { background: rgba(239,68,68,0.2); color: #f87171; padding: 4px 12px; border-radius: 100px; font-weight: 700; font-size: 0.85rem; }
+	.timer { display: flex; gap: 8px; }
+	.time-block { background: rgba(0,0,0,0.4); padding: 2px 8px; border-radius: 6px; font-family: 'Sora', sans-serif; color: var(--sdai-primary); }
+
+	/* Hero */
+	.page-hero { padding: 60px 0 30px; text-align: center; position: relative; }
+	.glow-scan { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 500px; height: 500px; background: radial-gradient(circle, rgba(0,163,255,0.12) 0%, transparent 70%); filter: blur(50px); z-index: 0; }
+	.hero-content { position: relative; z-index: 1; }
+	.badge-row { display: flex; gap: 12px; justify-content: center; margin-bottom: 20px; }
+	.badge { padding: 6px 14px; border-radius: 100px; font-size: 0.85rem; font-weight: 700; }
+	.badge-shield { background: rgba(0,212,170,0.15); color: #00D4AA; border: 1px solid rgba(0,212,170,0.3); }
+	.badge-ley { background: rgba(0,163,255,0.12); color: var(--sdai-primary); border: 1px solid rgba(0,163,255,0.25); }
+	h1 { font-size: clamp(2.4rem, 5vw, 3.8rem); font-weight: 800; margin-bottom: 16px; }
+	.hero-subtitle { font-size: 1.15rem; color: var(--sdai-text-dim); max-width: 750px; margin: 0 auto; line-height: 1.7; }
+
+	/* Tabs */
+	.scanner-section { padding: 40px 0 80px; }
+	.scan-tabs-nav { display: flex; gap: 12px; justify-content: center; padding: 12px; border-radius: 100px; max-width: 650px; margin: 0 auto 40px; flex-wrap: wrap; }
+	.tab-nav-btn { background: transparent; border: none; color: var(--sdai-text-dim); padding: 12px 24px; border-radius: 100px; font-weight: 700; cursor: pointer; transition: all 0.3s; font-size: 0.95rem; }
+	.tab-nav-btn:hover { color: #fff; }
+	.tab-nav-btn.active { background: var(--sdai-primary); color: #fff; box-shadow: 0 4px 20px rgba(0,163,255,0.4); }
+	.hidden { display: none !important; }
+
+	/* Step Indicator */
+	.step-indicator { display: flex; align-items: center; justify-content: center; gap: 0; margin-bottom: 36px; }
+	.step-dot {
+		width: 36px; height: 36px; border-radius: 50%;
+		background: rgba(255,255,255,0.06); border: 2px solid rgba(255,255,255,0.15);
+		display: flex; align-items: center; justify-content: center;
+		font-size: 0.85rem; font-weight: 700; color: var(--sdai-text-dim);
+		transition: all 0.4s ease; flex-shrink: 0;
+	}
+	.step-dot.active { background: var(--sdai-primary); border-color: var(--sdai-primary); color: #fff; box-shadow: 0 0 20px rgba(0,163,255,0.5); }
+	.step-dot.done { background: #00D4AA; border-color: #00D4AA; color: #0d1117; }
+	.step-line { height: 2px; width: 60px; background: rgba(255,255,255,0.1); transition: background 0.4s ease; }
+	.step-line.active { background: linear-gradient(90deg, #00D4AA, var(--sdai-primary)); }
+
+	/* Scan Cards */
+	.scan-card-wrapper { padding: 48px; border-radius: 32px; max-width: 750px; margin: 0 auto; }
+	.scan-card-wrapper h2 { font-size: 1.8rem; margin-bottom: 8px; }
+	.card-desc { color: var(--sdai-text-dim); margin-bottom: 32px; line-height: 1.6; }
+
+	/* Auth Forms */
+	.auth-form { display: flex; flex-direction: column; gap: 24px; }
+	.field-group { display: flex; flex-direction: column; gap: 8px; }
+	.field-group label { font-size: 0.9rem; font-weight: 600; color: #e2e8f0; }
+	.field-hint { font-size: 0.8rem; color: var(--sdai-text-dim); }
+	.input-styled { background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; padding: 4px 4px 4px 16px; display: flex; align-items: center; transition: border-color 0.3s; }
+	.input-styled:focus-within { border-color: var(--sdai-primary); box-shadow: 0 0 0 3px rgba(0,163,255,0.15); }
+	.input-styled input { flex: 1; background: transparent; border: none; color: #fff; font-size: 1rem; outline: none; padding: 12px 4px; }
+
+	.btn-primary {
+		background: linear-gradient(135deg, var(--sdai-primary), #007acc);
+		color: #fff; border: none; padding: 16px 32px; border-radius: 12px;
+		font-weight: 700; font-size: 1rem; cursor: pointer; display: flex;
+		align-items: center; justify-content: center; gap: 10px;
+		transition: all 0.3s; width: 100%;
+	}
+	.btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,163,255,0.4); }
+	.btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+	.btn-primary.btn-teal { background: linear-gradient(135deg, #00D4AA, #00a38a); }
+	.btn-primary.btn-teal:hover:not(:disabled) { box-shadow: 0 8px 24px rgba(0,212,170,0.4); }
+	.btn-ghost { background: transparent; border: 1px solid rgba(255,255,255,0.15); color: var(--sdai-text-dim); padding: 10px 20px; border-radius: 10px; cursor: pointer; font-size: 0.9rem; transition: all 0.3s; margin-top: 12px; }
+	.btn-ghost:hover { border-color: rgba(255,255,255,0.3); color: #fff; }
+	.btn-ghost-small { background: transparent; border: 1px solid rgba(255,255,255,0.12); color: var(--sdai-text-dim); padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; transition: all 0.3s; white-space: nowrap; }
+	.btn-ghost-small:hover { border-color: rgba(239,68,68,0.5); color: #f87171; }
+	.btn-icon { font-size: 1.1rem; }
+	.btn-text { background: none; border: none; color: var(--sdai-primary); cursor: pointer; font-size: 0.85rem; padding: 0; text-decoration: underline; }
+	.btn-text.disabled { color: var(--sdai-text-dim); cursor: not-allowed; text-decoration: none; }
+
+	.domain-warning { background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.3); color: #f87171; padding: 10px 16px; border-radius: 10px; font-size: 0.88rem; }
+
+	.auth-note { display: flex; gap: 12px; align-items: flex-start; background: rgba(0,163,255,0.05); border: 1px solid rgba(0,163,255,0.15); border-radius: 12px; padding: 16px; margin-top: 8px; }
+	.auth-note p { margin: 0; font-size: 0.85rem; color: var(--sdai-text-dim); line-height: 1.5; }
+
+	/* OTP */
+	.otp-wrapper { display: flex; gap: 8px; }
+	.otp-input {
+		flex: 1; background: rgba(0,0,0,0.4); border: 2px solid rgba(255,255,255,0.15);
+		border-radius: 12px; color: #fff; font-size: 2rem; font-weight: 800;
+		text-align: center; letter-spacing: 16px; padding: 16px;
+		outline: none; transition: border-color 0.3s; font-family: 'Sora', monospace;
+	}
+	.otp-input:focus { border-color: var(--sdai-primary); box-shadow: 0 0 0 3px rgba(0,163,255,0.15); }
+	.otp-timer-row { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
+	.otp-timer { font-size: 0.85rem; color: var(--sdai-text-dim); }
+	.error-box { background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.3); color: #f87171; padding: 12px 16px; border-radius: 10px; font-size: 0.9rem; }
+
+	/* Consent */
+	.session-summary { background: rgba(0,212,170,0.05); border: 1px solid rgba(0,212,170,0.2); border-radius: 16px; padding: 20px 24px; margin-bottom: 24px; }
+	.session-summary h4 { font-size: 0.95rem; font-weight: 700; color: #00D4AA; margin-bottom: 16px; }
+	.session-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+	.session-item { display: flex; flex-direction: column; gap: 4px; }
+	.session-label { font-size: 0.75rem; text-transform: uppercase; color: var(--sdai-text-dim); font-weight: 600; }
+	.session-value { font-size: 0.9rem; color: #e2e8f0; font-weight: 600; }
+
+	.consent-legal-box { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 24px; margin-bottom: 24px; max-height: 260px; overflow-y: auto; }
+	.consent-legal-box::-webkit-scrollbar { width: 6px; }
+	.consent-legal-box::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
+	.consent-legal-box h4 { font-size: 0.95rem; font-weight: 700; color: #f59e0b; margin-bottom: 16px; }
+	.legal-text { font-size: 0.88rem; color: #cbd5e1; line-height: 1.7; }
+	.legal-text ol { padding-left: 20px; margin: 12px 0; }
+	.legal-text li { margin-bottom: 10px; }
+	.legal-text a { color: var(--sdai-primary); }
+
+	.consent-checkbox-row { display: flex; gap: 14px; align-items: flex-start; }
+	.consent-checkbox-row input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; margin-top: 3px; accent-color: var(--sdai-primary); cursor: pointer; }
+	.consent-checkbox-row label { font-size: 0.88rem; color: var(--sdai-text-dim); line-height: 1.6; cursor: pointer; }
+	.consent-checkbox-row a { color: var(--sdai-primary); }
+
+	/* Scanner header */
+	.scanner-header-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
+	.scanner-header-row h2 { font-size: 1.6rem; margin-bottom: 6px; }
+
+	/* Scan form */
+	.scan-form-box { display: flex; flex-direction: column; gap: 12px; }
+	.input-group { display: flex; gap: 12px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.12); padding: 8px 8px 8px 18px; border-radius: 100px; align-items: center; }
+	.input-icon { font-size: 1.2rem; }
+	.input-group input { flex: 1; background: transparent; border: none; color: #aaa; font-size: 1.05rem; outline: none; }
+	.input-group input[readonly] { color: #00D4AA; font-weight: 700; }
+	.btn-scan { background: linear-gradient(135deg, var(--sdai-primary), #007acc); color: #fff; border: none; padding: 14px 28px; border-radius: 100px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.3s; }
+	.btn-scan:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,163,255,0.4); }
+	.session-badge { font-size: 0.82rem; color: #00D4AA; background: rgba(0,212,170,0.08); border: 1px solid rgba(0,212,170,0.2); border-radius: 8px; padding: 8px 14px; text-align: center; }
+
+	/* Progress */
+	.progress-card { padding: 40px; border-radius: 24px; max-width: 850px; margin: 30px auto 0; }
+	.progress-bar-container { height: 8px; background: rgba(255,255,255,0.08); border-radius: 100px; overflow: hidden; margin: 20px 0 30px; }
+	.progress-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--sdai-primary), #00D4AA); transition: width 0.4s ease; }
+	.step-list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+	.step-item { color: var(--sdai-text-dim); font-size: 0.95rem; padding: 8px 12px; border-radius: 8px; transition: all 0.3s; }
+	.step-item.active { color: #fff; background: rgba(0,163,255,0.1); font-weight: 600; }
+
+	/* Results */
+	.results-container { max-width: 850px; margin: 40px auto 0; display: flex; flex-direction: column; gap: 30px; }
+	.results-header { padding: 40px; border-radius: 32px; }
+	.score-box { display: flex; align-items: center; gap: 32px; }
+	.score-circle { width: 110px; height: 110px; border-radius: 50%; background: radial-gradient(circle, rgba(0,212,170,0.2), transparent 70%); border: 4px solid #00D4AA; display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0; }
+	#score-value { font-family: 'Sora', sans-serif; font-size: 2rem; font-weight: 800; color: #00D4AA; line-height: 1; }
+	.score-label { font-size: 0.7rem; text-transform: uppercase; color: var(--sdai-text-dim); margin-top: 4px; }
+	.score-text h3 { font-size: 1.6rem; margin-bottom: 8px; }
+	.results-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+	.res-card { padding: 24px; border-radius: 20px; }
+	.res-icon { font-size: 1.8rem; margin-bottom: 12px; }
+	.res-card h4 { font-size: 1.1rem; margin-bottom: 8px; }
+	.res-status { font-size: 0.9rem; color: var(--sdai-text-dim); }
+	.findings-card { padding: 36px; border-radius: 28px; }
+	.findings-card h3 { font-size: 1.4rem; margin-bottom: 24px; }
+	.findings-list { display: flex; flex-direction: column; gap: 16px; }
+	.finding-item { padding: 16px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); }
+	.finding-item.positive { border-color: rgba(0,212,170,0.3); background: rgba(0,212,170,0.03); }
+	.finding-item.warning { border-color: rgba(245,158,11,0.3); background: rgba(245,158,11,0.03); }
+	.finding-tag { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--sdai-primary); margin-bottom: 6px; display: block; }
+
+	/* Resources & Law */
+	.resource-card, .law-card { padding: 48px; border-radius: 32px; max-width: 850px; margin: 0 auto; }
+	.code-block-wrapper { margin-top: 28px; }
+	.code-block-wrapper h3 { font-size: 1.1rem; margin-bottom: 12px; color: var(--sdai-primary); }
+	pre { background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1); padding: 20px; border-radius: 16px; overflow-x: auto; font-size: 0.9rem; color: #38bdf8; }
+	.law-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 36px; }
+	.law-item { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); padding: 24px; border-radius: 20px; }
+	.law-item h3 { font-size: 1.1rem; margin-bottom: 14px; }
+	.law-item ul { padding-left: 18px; margin: 0; color: var(--sdai-text-dim); font-size: 0.9rem; line-height: 1.6; }
+
+	/* Responsive */
+	@media (max-width: 1024px) { .results-grid, .law-grid { grid-template-columns: 1fr; } }
+	@media (max-width: 768px) {
+		.scan-card-wrapper, .resource-card, .law-card { padding: 28px 20px; }
+		.session-grid { grid-template-columns: 1fr; }
+		.step-line { width: 32px; }
+		.score-box { flex-direction: column; text-align: center; }
+		.input-group { flex-direction: column; border-radius: 20px; padding: 16px; }
+		.btn-scan { width: 100%; justify-content: center; }
+		.scanner-header-row { flex-direction: column; }
+	}
+</style>

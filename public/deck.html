@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>SDAI Executive Briefing v1.0</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* CSS reset & base */
+        :root {
+            --sdai-primary: #00A3FF;
+            --sdai-secondary: #002D5A;
+            --sdai-bg-soft: #080C24;
+            --glass-bg: rgba(13, 20, 44, 0.6);
+            --glass-border: rgba(0, 163, 255, 0.2);
+        }
+        body, html { margin: 0; padding: 0; font-family: 'Outfit', sans-serif; background-color: var(--sdai-bg-soft); color: #fff; height: 100%; overflow: hidden; }
+        
+        /* Scroll snapping */
+        .deck-container {
+            height: 100vh;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+        }
+        .slide {
+            height: 100vh;
+            width: 100vw;
+            scroll-snap-align: start;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            box-sizing: border-box;
+            padding: 50px;
+        }
+        
+        /* Typography */
+        .memorable-quote { font-size: 3.5rem; font-weight: 700; text-align: center; color: #fff; max-width: 1100px; line-height: 1.2; margin-bottom: 30px; text-shadow: 0 0 30px rgba(0,163,255,0.3); }
+        h2 { font-size: 2.5rem; color: var(--sdai-primary); margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px;}
+        p { font-size: 1.5rem; max-width: 800px; text-align: center; color: #ccc; line-height: 1.6; }
+        
+        /* Glass Panel */
+        .glass-panel { background: var(--glass-bg); border: 1px solid var(--glass-border); backdrop-filter: blur(10px); border-radius: 16px; padding: 60px; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); width: 100%; max-width: 1200px; display: flex; flex-direction: column; align-items: center;}
+        
+        /* Common Layouts */
+        .split-layout { display: flex; gap: 50px; width: 100%; justify-content: center; align-items: center; }
+        
+        /* Slide 1 & 10 (Hero) */
+        .logo-placeholder { width: 150px; height: 150px; background: url('logo-transparent.png') center/contain no-repeat; margin-bottom: 40px; }
+
+        /* Navigation hints */
+        .nav-hint { position: absolute; bottom: 30px; font-size: 1.2rem; color: rgba(255,255,255,0.4); animation: bounce 2s infinite; font-weight: 600;}
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(10px); } }
+
+        /* The diagrams from before (adapted) */
+        /* Paradigma */
+        .paradigm-container { display: flex; justify-content: space-between; align-items: center; gap: 40px; width: 100%;}
+        .col { flex: 1; padding: 40px; border-radius: 12px; }
+        .col-trad { background: rgba(255,255,255,0.05); color: #aaa; border: 1px solid rgba(255,255,255,0.1); }
+        .col-sdai { background: linear-gradient(135deg, rgba(0,163,255,0.1) 0%, rgba(0,45,90,0.4) 100%); border: 1px solid var(--sdai-primary); box-shadow: 0 0 20px rgba(0,163,255,0.2); color: #fff;}
+        .col h3 { text-align: center; margin-top: 0; margin-bottom: 20px; font-size: 1.8rem; color: #fff;}
+        .col ul { list-style: none; padding: 0; margin: 0;}
+        .col ul li { padding: 15px 0; border-bottom: 1px solid rgba(255,255,255,0.1); text-align: center; font-size: 1.3rem;}
+        .col ul li:last-child { border-bottom: none; padding-bottom: 0;}
+        .arrow { font-size: 4rem; color: var(--sdai-primary); }
+
+        /* COE */
+        .coe-wrapper { position: relative; width: 400px; height: 400px; margin: 0 auto; display: flex; justify-content: center; align-items: center; }
+        .coe-center { width: 120px; height: 120px; background: var(--sdai-primary); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 2rem; font-weight: bold; z-index: 10; box-shadow: 0 0 40px var(--sdai-primary); }
+        .coe-node { position: absolute; padding: 12px 25px; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 30px; font-weight: 600; font-size: 1.2rem; box-shadow: 0 4px 15px rgba(0,0,0,0.3);}
+        .n1 { top: 10px; left: 50%; transform: translateX(-50%); }
+        .n2 { top: 25%; right: -50px; }
+        .n3 { bottom: 25%; right: -50px; }
+        .n4 { bottom: 10px; left: 50%; transform: translateX(-50%); }
+        .n5 { bottom: 25%; left: -50px; }
+        .n6 { top: 25%; left: -50px; }
+        .coe-circle-line { position: absolute; width: 300px; height: 300px; border: 2px dashed var(--sdai-primary); border-radius: 50%; opacity: 0.3; z-index: 1;}
+
+        /* Staircase */
+        .staircase { display: flex; align-items: flex-end; justify-content: center; gap: 10px; height: 350px; width: 100%; margin-top: 20px;}
+        .step { flex: 1; text-align: center; padding: 15px 5px; font-weight: 600; font-size: 1.1rem; color: #fff; border-radius: 8px 8px 0 0; text-transform: uppercase;}
+        
+        /* PESCAR */
+        .pescar-container { position: relative; width: 400px; height: 400px; margin: 0 auto; border: 4px solid var(--sdai-primary); border-radius: 50%; display: flex; justify-content: center; align-items: center;}
+        .pescar-node { position: absolute; width: 120px; height: 120px; background: var(--sdai-bg-soft); border: 2px solid var(--sdai-primary); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 1.1rem; text-align: center; box-shadow: 0 0 20px rgba(0,163,255,0.3);}
+        .p1 { top: -60px; left: 50%; transform: translateX(-50%); }
+        .p2 { top: 25%; right: -60px; }
+        .p3 { bottom: 25%; right: -60px; }
+        .p4 { bottom: -60px; left: 50%; transform: translateX(-50%); }
+        .p5 { bottom: 25%; left: -60px; }
+        .p6 { top: 25%; left: -60px; }
+
+        /* Orquestacion */
+        .funnel { display: flex; flex-direction: column; align-items: center; gap: 40px;}
+        .standards { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;}
+        .std-badge { padding: 20px 40px; background: rgba(255,255,255,0.1); border-radius: 12px; font-weight: 600; font-size: 1.5rem;}
+        .funnel-arrow { font-size: 4rem; color: var(--sdai-primary); }
+        .framework-core { padding: 30px 60px; background: var(--sdai-primary); font-size: 2.5rem; font-weight: bold; border-radius: 16px; box-shadow: 0 0 50px rgba(0,163,255,0.5); text-transform: uppercase;}
+
+        /* Cards Slide 9 */
+        .cards-container { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; width: 100%;}
+        .sda-card { background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 50px 30px; border-radius: 12px; font-size: 1.8rem; font-weight: 600; text-align: center; flex: 1; min-width: 200px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);}
+        .sda-card:hover { border-color: var(--sdai-primary); background: rgba(0,163,255,0.1); }
+    </style>
+</head>
+<body>
+
+<div class="deck-container">
+
+    <!-- Slide 1 -->
+    <div class="slide">
+        <div class="logo-placeholder"></div>
+        <div class="memorable-quote">Desarrolle las capacidades que su organización necesita para ejecutar su estrategia con confianza.</div>
+        <p style="color: var(--sdai-primary); font-weight: 600; font-size: 2rem; margin-top: 20px;">SDAI Strategic Capability Assessment™</p>
+        <div class="nav-hint">▼ Scroll o Flechas para continuar</div>
+    </div>
+
+    <!-- Slide 2 -->
+    <div class="slide">
+        <div class="glass-panel" style="text-align: center;">
+            <div class="memorable-quote">El problema no es la tecnología.</div>
+            <h2 style="margin-top:20px;">¿Por qué fracasan tantos programas de transformación?</h2>
+            <p style="margin: 30px auto 0; font-size: 1.8rem;">El 70% de las iniciativas estratégicas no logran el retorno esperado. No fallan por falta de presupuesto o malas herramientas tecnológicas. Fallan por la ausencia de capacidades organizacionales integradas que conecten la visión directiva con la ejecución.</p>
+        </div>
+    </div>
+
+    <!-- Slide 3 -->
+    <div class="slide">
+        <div class="glass-panel">
+            <div class="memorable-quote" style="font-size: 3rem; margin-bottom: 60px;">Los proyectos terminan. Las capacidades permanecen.</div>
+            <div class="paradigm-container">
+                <div class="col col-trad">
+                    <h3>Enfoque Tradicional</h3>
+                    <ul>
+                        <li>Implementar tecnología</li>
+                        <li>Cumplir normativas</li>
+                        <li>Ejecutar proyectos</li>
+                        <li>Resolver problemas puntuales</li>
+                        <li>Resultados aislados</li>
+                    </ul>
+                </div>
+                <div class="arrow">➔</div>
+                <div class="col col-sdai">
+                    <h3 style="color:var(--sdai-primary)">Enfoque SDAI</h3>
+                    <ul>
+                        <li>Desarrollar capacidades</li>
+                        <li>Integrar gobernanza</li>
+                        <li>Diseñar arquitectura</li>
+                        <li>Generar confianza</li>
+                        <li>Crear valor sostenible</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 4 -->
+    <div class="slide">
+        <div class="glass-panel">
+            <div class="memorable-quote" style="font-size: 2.8rem; margin-bottom: 60px;">Toda estrategia depende de las capacidades que la organización es capaz de desarrollar.</div>
+            <div class="coe-wrapper">
+                <div class="coe-circle-line"></div>
+                <div class="coe-center">COE</div>
+                <div class="coe-node n1">Estrategia</div>
+                <div class="coe-node n2">Procesos</div>
+                <div class="coe-node n3">Gobernanza</div>
+                <div class="coe-node n4">Arquitectura</div>
+                <div class="coe-node n5">Tecnología</div>
+                <div class="coe-node n6">Personas</div>
+            </div>
+            <p style="margin: 60px auto 0; font-style: italic; font-size: 1.6rem; color:#fff;">Una capacidad no depende de una herramienta. Depende de cómo una organización integra todos sus elementos para alcanzar un propósito estratégico.</p>
+        </div>
+    </div>
+
+    <!-- Slide 5 -->
+    <div class="slide">
+        <div class="glass-panel">
+            <div class="memorable-quote" style="font-size: 3.2rem; margin-bottom: 50px;">La confianza se construye antes de implementarse.</div>
+            <h2>SDAI Trust Framework™</h2>
+            <div class="staircase">
+                <div class="step" style="height: 12%; background: rgba(0,163,255,0.1);">PRINCIPIOS</div>
+                <div class="step" style="height: 24%; background: rgba(0,163,255,0.2);">CULTURA</div>
+                <div class="step" style="height: 36%; background: rgba(0,163,255,0.3);">GOBERNANZA</div>
+                <div class="step" style="height: 48%; background: rgba(0,163,255,0.4);">DECISIONES</div>
+                <div class="step" style="height: 60%; background: rgba(0,163,255,0.5);">TECNOLOGÍA</div>
+                <div class="step" style="height: 72%; background: rgba(0,163,255,0.6);">ARQUITECTURA</div>
+                <div class="step" style="height: 84%; background: rgba(0,163,255,0.8);">TRUST</div>
+                <div class="step" style="height: 96%; background: rgba(0,163,255,1); box-shadow: 0 -10px 30px rgba(0,163,255,0.5); font-size: 1.4rem;">VALOR SOSTENIBLE</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 6 -->
+    <div class="slide">
+        <div class="glass-panel">
+            <div class="memorable-quote" style="font-size: 3.2rem; margin-bottom: 80px;">Toda capacidad debe evolucionar continuamente.</div>
+            <div class="pescar-container">
+                <div class="pescar-node p1">PROPÓSITO</div>
+                <div class="pescar-node p2">ENTENDER</div>
+                <div class="pescar-node p3">SISTEMATIZAR</div>
+                <div class="pescar-node p4">CONSTRUIR</div>
+                <div class="pescar-node p5">ASEGURAR</div>
+                <div class="pescar-node p6">RENOVAR</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 7 -->
+    <div class="slide">
+        <div class="glass-panel" style="text-align: center;">
+            <div class="memorable-quote" style="font-size: 3rem; margin-bottom: 50px;">No comenzamos implementando. Comenzamos comprendiendo.</div>
+            <h2 style="font-size: 3.5rem; color: #fff; margin-bottom: 60px;">Strategic Capability Assessment™</h2>
+            <div style="display: flex; gap: 40px; justify-content: center; width: 100%;">
+                <div style="background: rgba(0,163,255,0.1); border: 1px solid var(--sdai-primary); padding: 50px; border-radius: 12px; flex: 1;">
+                    <h3 style="color: var(--sdai-primary); font-size: 2.2rem; margin-top: 0;">Tiempo</h3>
+                    <p style="color: #fff; font-size: 2.5rem; font-weight: bold; margin: 20px auto 0;">2–4 semanas</p>
+                </div>
+                <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); padding: 50px 70px; border-radius: 12px; flex: 1.5; text-align: left;">
+                    <h3 style="color: #ccc; font-size: 2.2rem; margin-top: 0; margin-bottom: 20px;">Resultados</h3>
+                    <ul style="font-size: 1.8rem; line-height: 1.8; margin: 0; color: #fff; font-weight: 600;">
+                        <li>Arquitectura actual</li>
+                        <li>Roadmap estratégico</li>
+                        <li>Quick Wins</li>
+                        <li>COEs priorizadas</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 8 -->
+    <div class="slide">
+        <div class="glass-panel">
+            <div class="memorable-quote" style="font-size: 3.5rem; margin-bottom: 80px;">Los estándares no compiten. Se complementan.</div>
+            <div class="funnel">
+                <div class="standards">
+                    <span class="std-badge">ISO</span>
+                    <span class="std-badge">DAMA</span>
+                    <span class="std-badge">TOGAF</span>
+                    <span class="std-badge">COBIT</span>
+                    <span class="std-badge">NIST</span>
+                    <span class="std-badge">CRISP-DM</span>
+                    <span class="std-badge">IA</span>
+                </div>
+                <div class="funnel-arrow">⬇</div>
+                <div class="framework-core">Framework SDAI</div>
+                <p style="font-style:italic; margin-top:40px; font-size: 2rem; color: #fff;">No implementamos metodologías. Las orquestamos.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 9 -->
+    <div class="slide">
+        <div class="glass-panel" style="background: transparent; border: none; box-shadow: none;">
+            <div class="memorable-quote" style="font-size: 3.2rem; margin-bottom: 80px;">Nuestra diferencia no está en lo que implementamos. Está en cómo pensamos.</div>
+            <div class="cards-container">
+                <div class="sda-card">Arquitectura</div>
+                <div class="sda-card">Gobernanza</div>
+                <div class="sda-card">Privacidad</div>
+                <div class="sda-card">Inteligencia Artificial</div>
+                <div class="sda-card">Valor Sostenible</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 10 -->
+    <div class="slide">
+        <div class="logo-placeholder" style="margin-bottom: 30px;"></div>
+        <div class="memorable-quote" style="font-size: 3.5rem; max-width: 1300px;">Las organizaciones que desarrollan capacidades sostenibles construyen ventajas que el mercado difícilmente puede copiar.</div>
+        <p style="color: #ccc; margin-top: 40px; font-size: 2rem;">La confianza no es el resultado del cumplimiento.<br>Es el resultado del desarrollo consciente de capacidades organizacionales.</p>
+        <div style="margin-top: 70px; text-align: center;">
+            <div style="font-size: 1.8rem; font-weight: bold; color: var(--sdai-primary);">Hablemos de Estrategia</div>
+            <div style="font-size: 1.5rem; color: #fff; margin-top: 15px;">contacto@sdaichile.com &nbsp;|&nbsp; sdaichile.com</div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Keydown script to allow arrow keys navigation -->
+<script>
+    const container = document.querySelector('.deck-container');
+    const slides = document.querySelectorAll('.slide');
+    let currentSlide = 0;
+
+    window.addEventListener('keydown', (e) => {
+        if(e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') {
+            e.preventDefault();
+            if(currentSlide < slides.length - 1) {
+                currentSlide++;
+                slides[currentSlide].scrollIntoView({ behavior: 'smooth' });
+            }
+        } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft' || e.key === 'PageUp') {
+            e.preventDefault();
+            if(currentSlide > 0) {
+                currentSlide--;
+                slides[currentSlide].scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+    });
+</script>
+</body>
+</html>

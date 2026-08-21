@@ -1,0 +1,118 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+import Contact from '../components/Contact.astro';
+
+const forces = [
+  {k:'REGULACIÓN', v:'Nuevas obligaciones.', icon:'§'},
+  {k:'RIESGO', v:'Nuevas responsabilidades.', icon:'◇'},
+  {k:'DATOS', v:'Nuevas oportunidades.', icon:'◫'},
+  {k:'TECNOLOGÍA + IA', v:'Nuevas formas de operar.', icon:'✦'}
+];
+const capabilities = [
+  {n:'01', title:'Gobernanza de Datos', body:'Convierta los datos en un activo confiable, con responsabilidades, calidad y criterios claros para su utilización.'},
+  {n:'02', title:'Privacidad y Protección de Datos', body:'Desarrolle capacidad para tratar datos personales responsablemente y responder de forma gobernada a las nuevas exigencias regulatorias.'},
+  {n:'03', title:'Ciberseguridad', body:'Comprenda, gestione y reduzca los riesgos que afectan información, servicios y activos críticos.'},
+  {n:'04', title:'Inteligencia Artificial Responsable', body:'Adopte Inteligencia Artificial bajo principios de gobernanza, riesgo, responsabilidad, supervisión y control.'}
+];
+const maturity = ['L1 · INICIAL','L2 · DEFINIDO','L3 · IMPLEMENTADO','L4 · GESTIONADO','L5 · OPTIMIZADO'];
+---
+<Layout title="SDAI Chile | La confianza se gobierna" description="Consultoría estratégica en gobernanza, privacidad, ciberseguridad, datos e inteligencia artificial responsable. Transformamos obligaciones, riesgos y decisiones en capacidades organizacionales estratégicas.">
+  <main>
+    <Hero />
+
+    <section id="escenario" class="section scenario">
+      <div class="container">
+        <span class="section-label">EL ESCENARIO</span>
+        <div class="headline-grid">
+          <h2>Una transformación que las organizaciones necesitan <span>gobernar.</span></h2>
+          <p>Las organizaciones enfrentan simultáneamente nuevas exigencias regulatorias, mayores riesgos, crecimiento acelerado de los datos y una transformación tecnológica impulsada por la Inteligencia Artificial.</p>
+        </div>
+        <div class="forces-grid">
+          {forces.map((f) => <article class="force-card glass"><div class="force-icon">{f.icon}</div><h3>{f.k}</h3><p>{f.v}</p></article>)}
+        </div>
+        <div class="big-question"><span>La pregunta no es si el entorno va a cambiar.</span><h3>¿Tiene su organización la capacidad para gobernar esta transformación?</h3></div>
+      </div>
+    </section>
+
+    <section id="mirada" class="section philosophy">
+      <div class="container">
+        <div class="philosophy-card">
+          <div class="philosophy-copy">
+            <span class="section-label">FILOSOFÍA SDAI</span>
+            <h2>Nuestra mirada comienza <span>antes de la tecnología.</span></h2>
+            <p>Una nueva regulación puede generar una <strong>obligación</strong>. Una nueva amenaza puede generar un <strong>riesgo</strong>. Una nueva tecnología puede generar una <strong>oportunidad</strong>.</p>
+            <p>Pero ninguna de ellas, por sí sola, desarrolla la capacidad organizacional necesaria para responder.</p>
+          </div>
+          <div class="statement">Transformamos obligaciones, riesgos y decisiones en <strong>capacidades organizacionales estratégicas.</strong></div>
+        </div>
+        <div class="trust-flow" aria-label="Flujo de valor SDAI">
+          {['CONTEXTO','OBLIGACIONES + RIESGOS','GOBERNANZA','CAPACIDADES','DECISIONES','EVIDENCIA','CONFIANZA','VALOR SOSTENIBLE'].map((x,i)=><><span>{x}</span>{i<7 && <b>→</b>}</>)}
+        </div>
+        <p class="closing-line">La tecnología habilita la transformación. <strong>La gobernanza permite conducirla.</strong></p>
+      </div>
+    </section>
+
+    <section id="capacidades" class="section capabilities-section">
+      <div class="container">
+        <div class="section-header left"><span class="section-label">DONDE ACTUAMOS</span><h2>Capacidades para gobernar un entorno cada vez más complejo.</h2></div>
+        <div class="capabilities-grid">{capabilities.map(c=><article class="cap-card glass"><span class="cap-number">{c.n}</span><h3>{c.title}</h3><p>{c.body}</p></article>)}</div>
+        <div class="section-manifesto">No implementamos disciplinas aisladas. <strong>Desarrollamos capacidades que deben coexistir dentro de una misma organización.</strong></div>
+      </div>
+    </section>
+
+    <section id="framework" class="section framework-section">
+      <div class="container framework-grid">
+        <div><span class="section-label">NUESTRA ARQUITECTURA METODOLÓGICA</span><h2>SDAI Trust Framework™</h2><p>Una arquitectura para transformar desafíos regulatorios y tecnológicos en capacidades <strong>gobernables, medibles y capaces de evolucionar.</strong></p><a href="/quienes-somos" class="text-link">Conocer nuestra mirada →</a></div>
+        <div class="framework-chain glass">{['PRINCIPIOS','CULTURA','GOBERNANZA','DECISIONES','TECNOLOGÍA','ARQUITECTURA','CONFIANZA','VALOR SOSTENIBLE'].map((x,i)=><div class="chain-node"><span>{String(i+1).padStart(2,'0')}</span><strong>{x}</strong></div>)}</div>
+      </div>
+    </section>
+
+    <section id="madurez" class="section maturity-section">
+      <div class="container">
+        <div class="section-header"><span class="section-label">EVOLUCIÓN ORGANIZACIONAL</span><h2>Un camino de madurez, <span>no de moda.</span></h2><p>Las regulaciones cambian. Las tecnologías evolucionan. Los riesgos cambian. <strong>La capacidad para gobernarlos debe permanecer.</strong></p></div>
+        <div class="maturity-track">{maturity.map((m,i)=><div class="maturity-step"><div class="dot">{i+1}</div><span>{m}</span></div>)}</div>
+        <p class="maturity-note">No todas las organizaciones necesitan alcanzar inmediatamente el mismo nivel. Primero necesitamos conocer <strong>dónde están, qué necesitan desarrollar y qué evidencia demuestra su avance.</strong></p>
+      </div>
+    </section>
+
+    <section id="rutas" class="section routes-section">
+      <div class="container"><div class="section-header"><span class="section-label">UNA FILOSOFÍA. DIFERENTES CAMINOS.</span><h2>¿Qué transformación necesita gobernar su organización?</h2></div>
+        <div class="routes-grid">
+          <article class="route-card enterprise glass"><span>ORGANIZACIONES E INSTITUCIONES</span><h3>Gobierne la complejidad.</h3><p>Regulación, riesgo, datos, ciberseguridad e Inteligencia Artificial abordados desde una perspectiva estratégica y de desarrollo de capacidades.</p><a href="#contacto" class="text-link">Explorar soluciones estratégicas →</a></article>
+          <article class="route-card pyme glass"><span>PYMES</span><h3>Convierta el cumplimiento en capacidad para crecer.</h3><p>Construya una empresa segura, gobernada y preparada para tomar decisiones basadas en datos.</p><div class="pyme-route">CONOCER <b>→</b> PROTEGER <b>→</b> GOBERNAR <b>→</b> MEDIR <b>→</b> DECIDIR <b>→</b> CRECER</div><a href="/pyme" class="text-link">Conocer Ruta Data Driven PYME →</a></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="evaluacion" class="section assessment-section">
+      <div class="container assessment-card glass">
+        <div><span class="section-label">DECISIONES BASADAS EN EVIDENCIA</span><h2>Antes de decidir qué implementar, conozca dónde está.</h2><p>Una evaluación controlada y autorizada permite identificar señales de exposición, preparación y oportunidades de mejora antes de definir una intervención.</p></div>
+        <div class="assessment-side"><span class="assessment-name">SDAI Digital Trust Assessment™</span><div class="assessment-tags"><span>Autorizado</span><span>Controlado</span><span>Trazable</span><span>Basado en evidencia</span></div><a href="/scan" class="btn-premium">Conocer la evaluación</a></div>
+      </div>
+    </section>
+
+    <section id="evidencia" class="section evidence-section">
+      <div class="container"><div class="section-header"><span class="section-label">MÁS ALLÁ DEL DOCUMENTO</span><h2>La confianza no se declara. <span>Se demuestra.</span></h2></div>
+        <div class="evidence-grid"><article><b>01</b><h3>DEFINIDO</h3><p>Existe una política, proceso, responsabilidad o control.</p></article><div class="e-arrow">→</div><article><b>02</b><h3>IMPLEMENTADO</h3><p>Existe evidencia objetiva de que está desplegado y opera.</p></article><div class="e-arrow">→</div><article><b>03</b><h3>GESTIONADO</h3><p>Se mide, revisa, gobierna y mejora de forma sistemática.</p></article></div>
+        <div class="equation">Definir <strong>≠</strong> Implementar <strong>≠</strong> Gestionar</div>
+      </div>
+    </section>
+
+    <Contact />
+  </main>
+</Layout>
+
+<style>
+.section{position:relative}.section-label{display:inline-flex;align-items:center;gap:10px;color:#38bdf8;font-weight:800;letter-spacing:.18em;font-size:.72rem;margin-bottom:18px}.section-label:before{content:"";width:28px;height:1px;background:#d7a84b}.headline-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:70px;align-items:end;margin-bottom:54px}.headline-grid h2,.section-header h2,.philosophy h2,.framework-section h2,.assessment-section h2{font-size:clamp(2.4rem,5vw,4.4rem);line-height:1.04;letter-spacing:-.035em}.headline-grid h2 span,.philosophy h2 span,.maturity-section h2 span,.evidence-section h2 span{color:#38bdf8}.headline-grid p,.section-header p,.framework-section p,.assessment-section p{color:var(--sdai-text-dim);font-size:1.08rem;line-height:1.75}
+.scenario{background:linear-gradient(180deg,#020617 0%,#061126 100%)}.forces-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}.force-card{padding:28px;border-radius:20px}.force-icon{font-size:2rem;color:#38bdf8;margin-bottom:25px}.force-card h3{font-size:.88rem;letter-spacing:.09em}.force-card p{color:var(--sdai-text-dim);margin-bottom:0}.big-question{margin-top:70px;padding:40px;border-top:1px solid rgba(56,189,248,.25);border-bottom:1px solid rgba(56,189,248,.25);text-align:center}.big-question span{color:#94a3b8;font-size:.84rem;letter-spacing:.13em;text-transform:uppercase}.big-question h3{font-size:clamp(1.7rem,4vw,3.2rem);max-width:950px;margin:14px auto 0}
+.philosophy{background:radial-gradient(circle at 15% 30%,rgba(14,165,233,.08),transparent 32%),#030a18}.philosophy-card{display:grid;grid-template-columns:1.1fr .9fr;gap:60px;align-items:end}.philosophy-copy p{font-size:1.12rem;color:var(--sdai-text-dim);max-width:720px}.statement{font-family:'Sora',sans-serif;font-size:clamp(1.6rem,3.2vw,2.7rem);line-height:1.3;padding:34px;border-left:2px solid #d7a84b;background:linear-gradient(90deg,rgba(215,168,75,.08),transparent)}.statement strong{color:#38bdf8}.trust-flow{margin-top:70px;display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;padding:26px;border:1px solid rgba(56,189,248,.14);border-radius:18px;background:rgba(2,6,23,.5)}.trust-flow span{font-size:.7rem;letter-spacing:.08em;color:#e2e8f0}.trust-flow b{color:#d7a84b}.closing-line{text-align:center;margin:28px auto 0;color:#94a3b8}.closing-line strong{color:#fff}
+.capabilities-section{background:#020817}.section-header{text-align:center;max-width:880px;margin:0 auto 58px}.section-header.left{text-align:left;margin-left:0;max-width:850px}.capabilities-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:22px}.cap-card{padding:38px;border-radius:22px;position:relative;overflow:hidden}.cap-card:before{content:"";position:absolute;top:0;left:0;width:3px;height:100%;background:linear-gradient(#22d3ee,#2563eb)}.cap-number{font-family:'Sora';color:#38bdf8;opacity:.65;font-size:.8rem;letter-spacing:.12em}.cap-card h3{font-size:1.45rem;margin:16px 0 12px}.cap-card p{color:var(--sdai-text-dim);margin:0}.section-manifesto{margin-top:40px;padding:28px 32px;border:1px solid rgba(215,168,75,.2);border-radius:18px;color:#cbd5e1;font-size:1.12rem}.section-manifesto strong{color:#fff}
+.framework-section{background:linear-gradient(180deg,#061126,#020617)}.framework-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:70px;align-items:center}.framework-grid p{font-size:1.12rem}.text-link{display:inline-block;margin-top:18px;color:#38bdf8;text-decoration:none;font-weight:700}.framework-chain{border-radius:22px;padding:26px}.chain-node{display:grid;grid-template-columns:42px 1fr;gap:14px;align-items:center;padding:13px 8px;border-bottom:1px solid rgba(148,163,184,.08)}.chain-node:last-child{border-bottom:0}.chain-node span{color:#d7a84b;font-size:.7rem}.chain-node strong{font-size:.88rem;letter-spacing:.09em}
+.maturity-section{background:#020617}.maturity-track{display:grid;grid-template-columns:repeat(5,1fr);gap:0;margin-top:40px}.maturity-step{position:relative;text-align:center}.maturity-step:before{content:"";position:absolute;top:23px;left:-50%;width:100%;height:1px;background:linear-gradient(90deg,#2563eb,#38bdf8);z-index:0}.maturity-step:first-child:before{display:none}.dot{position:relative;z-index:1;width:46px;height:46px;margin:0 auto 14px;border:1px solid #38bdf8;background:#041027;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#38bdf8;font-weight:800}.maturity-step span{font-size:.75rem;color:#cbd5e1}.maturity-note{max-width:860px;text-align:center;margin:44px auto 0;color:#94a3b8;font-size:1.08rem}.maturity-note strong{color:#fff}
+.routes-section{background:linear-gradient(180deg,#020617,#061126)}.routes-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}.route-card{padding:44px;border-radius:24px}.route-card>span{font-size:.72rem;letter-spacing:.14em;color:#38bdf8;font-weight:800}.route-card h3{font-size:2rem;margin:18px 0}.route-card p{color:#94a3b8}.route-card.pyme{border-color:rgba(215,168,75,.24);background:linear-gradient(145deg,rgba(215,168,75,.05),rgba(255,255,255,.02))}.pyme-route{font-size:.69rem;letter-spacing:.06em;color:#e2e8f0;margin:24px 0 8px;display:flex;gap:8px;flex-wrap:wrap}.pyme-route b{color:#d7a84b}
+.assessment-section{background:#020817}.assessment-card{display:grid;grid-template-columns:1fr .8fr;gap:50px;padding:48px;border-radius:28px}.assessment-side{display:flex;flex-direction:column;align-items:flex-start;justify-content:center}.assessment-name{font-family:'Sora';font-size:1.45rem;font-weight:800;margin-bottom:20px}.assessment-tags{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:26px}.assessment-tags span{border:1px solid rgba(56,189,248,.22);border-radius:999px;padding:7px 12px;font-size:.72rem;color:#93c5fd}
+.evidence-section{background:radial-gradient(circle at 50% 50%,rgba(37,99,235,.07),transparent 55%),#020617}.evidence-grid{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:18px;align-items:center}.evidence-grid article{padding:32px;border:1px solid rgba(148,163,184,.12);border-radius:18px;min-height:170px}.evidence-grid article b{color:#38bdf8;font-size:.72rem}.evidence-grid h3{margin:16px 0 10px}.evidence-grid p{color:#94a3b8;margin:0}.e-arrow{color:#d7a84b;font-size:1.8rem}.equation{text-align:center;margin-top:38px;font-family:'Sora';font-size:clamp(1.15rem,2.5vw,1.8rem)}.equation strong{color:#38bdf8;margin:0 10px}
+@media(max-width:950px){.headline-grid,.philosophy-card,.framework-grid,.assessment-card{grid-template-columns:1fr}.forces-grid{grid-template-columns:repeat(2,1fr)}.capabilities-grid,.routes-grid{grid-template-columns:1fr}.maturity-track{grid-template-columns:1fr;gap:18px}.maturity-step{text-align:left;display:flex;align-items:center;gap:16px}.maturity-step:before{display:none}.dot{margin:0}.evidence-grid{grid-template-columns:1fr}.e-arrow{transform:rotate(90deg);text-align:center}}
+@media(max-width:620px){.forces-grid{grid-template-columns:1fr}.cap-card,.route-card{padding:28px}.assessment-card{padding:28px}.trust-flow{justify-content:flex-start}.headline-grid{gap:24px}.big-question{padding:32px 16px}}
+</style>

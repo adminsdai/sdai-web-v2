@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>SDAI Intellectual Assets - Diagramas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --sdai-primary: #00A3FF;
+            --sdai-secondary: #002D5A;
+            --sdai-bg-soft: #080C24;
+            --glass-bg: rgba(13, 20, 44, 0.6);
+            --glass-border: rgba(0, 163, 255, 0.2);
+        }
+        body {
+            background-color: var(--sdai-bg-soft);
+            color: #ffffff;
+            font-family: 'Outfit', sans-serif;
+            margin: 0;
+            padding: 50px;
+            display: flex;
+            flex-direction: column;
+            gap: 100px;
+        }
+        .glass-panel {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 60px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            max-width: 900px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        h2 { text-align: center; color: var(--sdai-primary); margin-top: 0; margin-bottom: 60px; font-size: 2.2rem; }
+        
+        /* 1. Paradigma */
+        .paradigm-container { display: flex; justify-content: space-between; align-items: center; gap: 40px; }
+        .col { flex: 1; padding: 40px; border-radius: 12px; }
+        .col-trad { background: rgba(255,255,255,0.05); color: #aaa; border: 1px solid rgba(255,255,255,0.1); }
+        .col-sdai { background: linear-gradient(135deg, rgba(0,163,255,0.1) 0%, rgba(0,45,90,0.4) 100%); border: 1px solid var(--sdai-primary); box-shadow: 0 0 20px rgba(0,163,255,0.2); color: #fff;}
+        .col h3 { text-align: center; margin-top: 0; margin-bottom: 20px; font-size: 1.5rem;}
+        .col ul { list-style: none; padding: 0; margin: 0;}
+        .col ul li { padding: 15px 0; border-bottom: 1px solid rgba(255,255,255,0.1); text-align: center; font-size: 1.1rem;}
+        .col ul li:last-child { border-bottom: none; padding-bottom: 0;}
+        .arrow { font-size: 3rem; color: var(--sdai-primary); }
+
+        /* 2. COE */
+        .coe-wrapper { position: relative; width: 500px; height: 500px; margin: 0 auto; display: flex; justify-content: center; align-items: center; }
+        .coe-center { width: 140px; height: 140px; background: var(--sdai-primary); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 2rem; font-weight: bold; z-index: 10; box-shadow: 0 0 40px var(--sdai-primary); }
+        .coe-node { position: absolute; padding: 12px 25px; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 30px; font-weight: 600; font-size: 1.1rem; box-shadow: 0 4px 15px rgba(0,0,0,0.3);}
+        .n1 { top: 20px; left: 50%; transform: translateX(-50%); }
+        .n2 { top: 25%; right: -30px; }
+        .n3 { bottom: 25%; right: -30px; }
+        .n4 { bottom: 20px; left: 50%; transform: translateX(-50%); }
+        .n5 { bottom: 25%; left: -30px; }
+        .n6 { top: 25%; left: -30px; }
+        .coe-circle-line { position: absolute; width: 350px; height: 350px; border: 2px dashed var(--sdai-primary); border-radius: 50%; opacity: 0.3; z-index: 1;}
+
+        /* 3. Staircase */
+        .staircase { display: flex; align-items: flex-end; justify-content: center; gap: 8px; height: 350px; margin-top: 50px;}
+        .step { flex: 1; text-align: center; padding: 15px 5px; font-weight: 600; font-size: 0.85rem; color: #fff; border-radius: 8px 8px 0 0; transition: all 0.3s ease; text-transform: uppercase;}
+        
+        /* 4. PESCAR */
+        .pescar-container { position: relative; width: 400px; height: 400px; margin: 0 auto; border: 4px solid var(--sdai-primary); border-radius: 50%; display: flex; justify-content: center; align-items: center;}
+        .pescar-node { position: absolute; width: 110px; height: 110px; background: var(--sdai-bg-soft); border: 2px solid var(--sdai-primary); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 0.9rem; text-align: center; box-shadow: 0 0 20px rgba(0,163,255,0.3);}
+        .p1 { top: -55px; left: 50%; transform: translateX(-50%); }
+        .p2 { top: 25%; right: -55px; }
+        .p3 { bottom: 25%; right: -55px; }
+        .p4 { bottom: -55px; left: 50%; transform: translateX(-50%); }
+        .p5 { bottom: 25%; left: -55px; }
+        .p6 { top: 25%; left: -55px; }
+
+        /* 5. Integration */
+        .funnel { display: flex; flex-direction: column; align-items: center; gap: 30px;}
+        .standards { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;}
+        .std-badge { padding: 15px 30px; background: rgba(255,255,255,0.1); border-radius: 12px; font-weight: 600; font-size: 1.1rem;}
+        .funnel-arrow { font-size: 3rem; color: var(--sdai-primary); }
+        .framework-core { padding: 30px 60px; background: var(--sdai-primary); font-size: 2rem; font-weight: bold; border-radius: 16px; box-shadow: 0 0 40px rgba(0,163,255,0.5); text-transform: uppercase;}
+
+    </style>
+</head>
+<body>
+
+    <!-- Diagram 1 -->
+    <div class="glass-panel">
+        <h2>De Proyectos a Capacidades</h2>
+        <div class="paradigm-container">
+            <div class="col col-trad">
+                <h3>Enfoque Tradicional</h3>
+                <ul>
+                    <li>Implementar tecnología</li>
+                    <li>Cumplir normativas</li>
+                    <li>Ejecutar proyectos</li>
+                    <li>Resolver problemas puntuales</li>
+                    <li>Resultados aislados</li>
+                </ul>
+            </div>
+            <div class="arrow">➔</div>
+            <div class="col col-sdai">
+                <h3 style="color:var(--sdai-primary)">Enfoque SDAI</h3>
+                <ul>
+                    <li>Desarrollar capacidades</li>
+                    <li>Integrar gobernanza</li>
+                    <li>Diseñar arquitectura</li>
+                    <li>Generar confianza</li>
+                    <li>Crear valor sostenible</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Diagram 2 -->
+    <div class="glass-panel">
+        <h2>Capacidad Organizacional Estratégica (COE)</h2>
+        <div class="coe-wrapper">
+            <div class="coe-circle-line"></div>
+            <div class="coe-center">COE</div>
+            <div class="coe-node n1">Estrategia</div>
+            <div class="coe-node n2">Procesos</div>
+            <div class="coe-node n3">Gobernanza</div>
+            <div class="coe-node n4">Arquitectura</div>
+            <div class="coe-node n5">Tecnología</div>
+            <div class="coe-node n6">Personas / Información</div>
+        </div>
+        <p style="text-align:center; margin-top:60px; font-style:italic; font-size: 1.2rem; color: #ccc;">"Una capacidad no depende de una herramienta. Depende de cómo una organización integra<br>todos sus elementos para alcanzar un propósito estratégico."</p>
+    </div>
+
+    <!-- Diagram 3 -->
+    <div class="glass-panel">
+        <h2>SDAI Trust Framework™</h2>
+        <div class="staircase">
+            <div class="step" style="height: 12%; background: rgba(0,163,255,0.1);">PRINCIPIOS</div>
+            <div class="step" style="height: 24%; background: rgba(0,163,255,0.2);">CULTURA</div>
+            <div class="step" style="height: 36%; background: rgba(0,163,255,0.3);">GOBERNANZA</div>
+            <div class="step" style="height: 48%; background: rgba(0,163,255,0.4);">DECISIONES</div>
+            <div class="step" style="height: 60%; background: rgba(0,163,255,0.5);">TECNOLOGÍA</div>
+            <div class="step" style="height: 72%; background: rgba(0,163,255,0.6);">ARQUITECTURA</div>
+            <div class="step" style="height: 84%; background: rgba(0,163,255,0.8);">TRUST</div>
+            <div class="step" style="height: 96%; background: rgba(0,163,255,1); box-shadow: 0 -10px 30px rgba(0,163,255,0.5); font-size: 1rem;">VALOR SOSTENIBLE</div>
+        </div>
+        <p style="text-align:center; margin-top:40px; font-style:italic; font-size: 1.2rem; color: #ccc;">"La confianza se construye antes de implementarse."</p>
+    </div>
+
+    <!-- Diagram 4 -->
+    <div class="glass-panel" style="margin-top:50px">
+        <h2>El Ciclo PESCAR™</h2>
+        <div class="pescar-container">
+            <div class="pescar-node p1">PROPÓSITO</div>
+            <div class="pescar-node p2">ENTENDER</div>
+            <div class="pescar-node p3">SISTEMATIZAR</div>
+            <div class="pescar-node p4">CONSTRUIR</div>
+            <div class="pescar-node p5">ASEGURAR</div>
+            <div class="pescar-node p6">RENOVAR</div>
+        </div>
+        <p style="text-align:center; margin-top:80px; font-style:italic; font-size: 1.2rem; color: #ccc;">"Toda capacidad debe evolucionar continuamente."</p>
+    </div>
+
+    <!-- Diagram 5 -->
+    <div class="glass-panel" style="margin-top:50px">
+        <h2>La Orquestación</h2>
+        <div class="funnel">
+            <div class="standards">
+                <span class="std-badge">ISO</span>
+                <span class="std-badge">DAMA</span>
+                <span class="std-badge">TOGAF</span>
+                <span class="std-badge">COBIT</span>
+                <span class="std-badge">NIST</span>
+                <span class="std-badge">CRISP-DM</span>
+                <span class="std-badge">IA</span>
+            </div>
+            <div class="funnel-arrow">⬇</div>
+            <div class="framework-core">Framework SDAI</div>
+            <p style="font-style:italic; margin-top:20px; font-size: 1.2rem; color: #ccc;">"No implementamos metodologías. Las orquestamos."</p>
+        </div>
+    </div>
+
+</body>
+</html>

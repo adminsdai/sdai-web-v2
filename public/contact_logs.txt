@@ -1,0 +1,9 @@
+--- 2026-05-03 14:16:49 ---
+Has recibido un nuevo mensaje desde la web SDAI Chile.
+
+Nombre: Test User
+Email: test@example.com
+
+Mensaje:
+Verification test.
+

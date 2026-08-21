@@ -1,0 +1,232 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Card from '../components/Card.astro';
+import Contact from '../components/Contact.astro';
+
+const domains = [
+	{ title: "Arquitectura de Datos", body: "Definimos la estructura de los activos de datos para alinearlos con la estrategia del negocio." },
+	{ title: "Calidad de Datos", body: "Implementamos procesos para asegurar exactitud, integridad y consistencia de la información." },
+	{ title: "Metadatos", body: "Gestionamos el contexto de los datos para facilitar su descubrimiento y uso estratégico." },
+	{ title: "Datos Maestros", body: "Unificamos las entidades críticas del negocio para una visión 360° sin duplicidades." },
+	{ title: "Seguridad de Datos", body: "Protegemos la privacidad y confidencialidad bajo estándares internacionales." },
+	{ title: "Integración", body: "Conectamos silos de información para un flujo de datos eficiente y controlado." }
+];
+---
+
+<Layout title="Gobernanza de Datos | SDAI CHILE" description="Diseñamos modelos de gobernanza basados en DAMA-DMBOK2 para decisiones confiables.">
+	<div class="grid-bg"></div>
+	<main>
+		<!-- Hero Section -->
+		<section class="page-hero">
+			<div class="container">
+				<span class="badge">DAMA-DMBOK2</span>
+				<h1 class="text-gradient">Gobernanza de Datos: la base de decisiones confiables</h1>
+				<p>Las organizaciones no fallan por falta de datos, sino por la falta de control, calidad y gobernanza sobre ellos.</p>
+				<a href="#contacto" class="btn-premium">Evaluar madurez de datos</a>
+			</div>
+		</section>
+
+		<!-- The Problem -->
+		<section class="content-section">
+			<div class="container">
+				<div class="split-grid">
+					<div class="text-block">
+						<span class="section-label">El Desafío</span>
+						<h2>El problema no es tener datos</h2>
+						<p>Hoy, el volumen de información crece exponencialmente, pero la confianza en ella disminuye. La falta de gobernanza genera:</p>
+						<ul class="check-list">
+							<li>Información inconsistente entre áreas</li>
+							<li>Falta de trazabilidad y linaje de datos</li>
+							<li>Decisiones basadas en supuestos, no en hechos</li>
+							<li>Riesgos operacionales y de cumplimiento</li>
+						</ul>
+					</div>
+					<div class="glass-box">
+						<h3>¿Qué tan confiables son tus datos?</h3>
+						<div class="qa-item">
+							<p class="question">¿Sabes quién es dueño de cada dato crítico?</p>
+						</div>
+						<div class="qa-item">
+							<p class="question">¿Puedes confiar plenamente en tus reportes?</p>
+						</div>
+						<div class="qa-item">
+							<p class="question">¿Tienes trazabilidad de dónde vienen tus datos?</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- Domains / Our Approach -->
+		<section class="pillars-section">
+			<div class="container">
+				<div class="section-header">
+					<span class="section-label">Nuestro Enfoque</span>
+					<h2 class="text-gradient">Un modelo estructurado de gestión</h2>
+					<p>No implementamos herramientas aisladas; diseñamos un modelo organizacional que establece control y calidad.</p>
+				</div>
+				<div class="domains-grid">
+					{domains.map(domain => (
+						<Card title={domain.title} body={domain.body} />
+					))}
+				</div>
+			</div>
+		</section>
+
+		<!-- Final CTA -->
+		<section class="cta-banner">
+			<div class="container">
+				<div class="glass banner-inner">
+					<h2>¿Qué ocurre sin gobernanza?</h2>
+					<p>Decisiones incorrectas, riesgos de seguridad y fallas críticas en proyectos de Inteligencia Artificial.</p>
+					<a href="#contacto" class="btn-premium">Solicitar Diagnóstico Estratégico</a>
+				</div>
+			</div>
+		</section>
+
+		<Contact />
+	</main>
+</Layout>
+
+<style>
+	/* Background Grid (Same as Home) */
+	.grid-bg {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background-image: 
+			linear-gradient(rgba(0, 163, 255, 0.03) 1px, transparent 1px),
+			linear-gradient(90deg, rgba(0, 163, 255, 0.03) 1px, transparent 1px);
+		background-size: 50px 50px;
+		z-index: -1;
+		pointer-events: none;
+	}
+
+	.page-hero {
+		min-height: 70vh;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		text-align: center;
+		padding-top: 150px;
+	}
+
+	.page-hero h1 {
+		font-size: clamp(2.5rem, 6vw, 4rem);
+		max-width: 900px;
+		margin: 20px auto;
+	}
+
+	.badge {
+		background: rgba(0, 163, 255, 0.1);
+		color: var(--sdai-primary);
+		padding: 8px 16px;
+		border-radius: 100px;
+		font-size: 0.9rem;
+		font-weight: 700;
+	}
+
+	.section-label {
+		color: var(--sdai-primary);
+		font-weight: 700;
+		text-transform: uppercase;
+		font-size: 0.9rem;
+		letter-spacing: 2px;
+		margin-bottom: 16px;
+		display: block;
+	}
+
+	.split-grid {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 80px;
+		align-items: center;
+	}
+
+	.text-block h2 {
+		font-size: 3rem;
+		margin-bottom: 24px;
+	}
+
+	.check-list {
+		list-style: none;
+		padding: 0;
+		margin-top: 32px;
+	}
+
+	.check-list li {
+		padding: 12px 0;
+		display: flex;
+		align-items: center;
+		gap: 15px;
+		font-size: 1.1rem;
+		color: var(--sdai-text-dim);
+	}
+
+	.check-list li::before {
+		content: '✓';
+		color: var(--sdai-primary);
+		font-weight: bold;
+	}
+
+	.glass-box {
+		background: rgba(255, 255, 255, 0.03);
+		backdrop-filter: blur(16px);
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		padding: 48px;
+		border-radius: 32px;
+	}
+
+	.qa-item {
+		padding: 20px 0;
+		border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+	}
+
+	.question {
+		font-weight: 600;
+		color: #fff;
+		margin: 0;
+	}
+
+	.section-header {
+		text-align: center;
+		margin-bottom: 60px;
+	}
+
+	.domains-grid {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 30px;
+	}
+
+	.cta-banner {
+		text-align: center;
+	}
+
+	.banner-inner {
+		padding: 80px 40px;
+		border-radius: 40px;
+		background: linear-gradient(135deg, rgba(0, 163, 255, 0.05), rgba(0, 45, 90, 0.1));
+	}
+
+	.banner-inner h2 {
+		font-size: 2.5rem;
+		margin-bottom: 20px;
+	}
+
+	.banner-inner p {
+		font-size: 1.2rem;
+		color: var(--sdai-text-dim);
+		margin: 0 auto 40px;
+		max-width: 600px;
+	}
+
+	@media (max-width: 1024px) {
+		.split-grid, .domains-grid {
+			grid-template-columns: 1fr;
+		}
+		.page-hero { padding-top: 120px; }
+	}
+</style>

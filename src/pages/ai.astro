@@ -1,0 +1,240 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Card from '../components/Card.astro';
+import Contact from '../components/Contact.astro';
+
+const solutions = [
+	{ title: "Diagnóstico AI Readiness", body: "Evaluamos si tu infraestructura y gobernanza de datos están listos para soportar modelos de IA." },
+	{ title: "Arquitecturas LLM Locales", body: "Implementamos modelos de lenguaje (LLMs) seguros en tu propia infraestructura para total privacidad." },
+	{ title: "Automatización Inteligente", body: "Diseñamos flujos de trabajo basados en agentes de IA que resuelven tareas complejas de negocio." },
+	{ title: "IA para Gobernanza", body: "Usamos modelos predictivos para identificar brechas de calidad y seguridad en tus datos automáticamente." },
+	{ title: "Estrategia Ética y Control", body: "Establecemos marcos de control para que el uso de la IA sea responsable y transparente." },
+	{ title: "Entrenamiento y Reskill", body: "Capacitamos a tu equipo para interactuar y potenciar sus capacidades con herramientas de IA." }
+];
+---
+
+<Layout title="Inteligencia Artificial Estratégica | SDAI CHILE" description="Transformamos datos en decisiones inteligentes a través de una IA segura, agnóstica y gobernada.">
+	<div class="grid-bg"></div>
+	<main>
+		<!-- Hero Section -->
+		<section class="page-hero">
+			<div class="glow-brain"></div>
+			<div class="container">
+				<span class="badge">IA Agnóstica & Segura</span>
+				<h1 class="text-gradient">IA con propósito: Transformando datos en inteligencia</h1>
+				<p>La IA es el motor, pero la gobernanza de datos es el combustible. Sin cimientos sólidos, la IA es solo un riesgo.</p>
+				<a href="#contacto" class="btn-premium">Diseñar Hoja de Ruta IA</a>
+			</div>
+		</section>
+
+		<!-- The Approach -->
+		<section class="content-section">
+			<div class="container">
+				<div class="split-grid">
+					<div class="text-block">
+						<span class="section-label">Nuestra Filosofía</span>
+						<h2>IA Gobernada y Segura</h2>
+						<p>No creemos en la IA como una "caja negra". Implementamos soluciones donde la transparencia y el control son lo primero.</p>
+						<ul class="check-list">
+							<li>Modelos agnósticos (Claude, Gemini, GPT) adaptados a tu necesidad.</li>
+							<li>Privacidad total: Tus datos nunca entrenan modelos públicos.</li>
+							<li>Resultados medibles y alineados con la estrategia de negocio.</li>
+						</ul>
+					</div>
+					<div class="glass-box neural-box">
+						<div class="neural-decoration"></div>
+						<h3>De la expectativa a la realidad</h3>
+						<p>Ayudamos a las organizaciones a superar el "hype" de la IA y aterrizarla en procesos que generan valor real desde el primer día.</p>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- Solutions Grid -->
+		<section class="pillars-section">
+			<div class="container">
+				<div class="section-header">
+					<span class="section-label">Soluciones</span>
+					<h2 class="text-gradient">Capacidades de IA Avanzada</h2>
+					<p>Integramos inteligencia en cada capa de tu organización de forma segura y escalable.</p>
+				</div>
+				<div class="solutions-grid">
+					{solutions.map(sol => (
+						<Card title={sol.title} body={sol.body} />
+					))}
+				</div>
+			</div>
+		</section>
+
+		<!-- AI + Governance -->
+		<section class="integration-section">
+			<div class="container">
+				<div class="glass integration-card">
+					<div class="integration-grid">
+						<div class="int-text">
+							<h2>El círculo virtuoso</h2>
+							<p>Nuestra metodología integra **Datos**, **Seguridad** e **IA**. La IA no solo consume datos, también ayuda a gobernarlos mejor.</p>
+						</div>
+						<div class="int-image">
+							<img src="/images/ia-integration.png" alt="SDAI AI Integration" />
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<Contact />
+	</main>
+</Layout>
+
+<style>
+	.grid-bg {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background-image: 
+			linear-gradient(rgba(0, 163, 255, 0.03) 1px, transparent 1px),
+			linear-gradient(90deg, rgba(0, 163, 255, 0.03) 1px, transparent 1px);
+		background-size: 50px 50px;
+		z-index: -1;
+		pointer-events: none;
+	}
+
+	.page-hero {
+		min-height: 70vh;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		text-align: center;
+		padding-top: 150px;
+		position: relative;
+		overflow: hidden;
+	}
+
+	.glow-brain {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		width: 500px;
+		height: 500px;
+		background: radial-gradient(circle, rgba(155, 81, 224, 0.15) 0%, transparent 70%);
+		filter: blur(50px);
+		z-index: 0;
+	}
+
+	.page-hero h1 {
+		font-size: clamp(2.5rem, 6vw, 4rem);
+		max-width: 900px;
+		margin: 20px auto;
+		position: relative;
+		z-index: 1;
+	}
+
+	.badge {
+		background: rgba(155, 81, 224, 0.1);
+		color: #9b51e0;
+		padding: 8px 16px;
+		border-radius: 100px;
+		font-size: 0.9rem;
+		font-weight: 700;
+		border: 1px solid rgba(155, 81, 224, 0.2);
+	}
+
+	.section-label {
+		color: var(--sdai-primary);
+		font-weight: 700;
+		text-transform: uppercase;
+		font-size: 0.9rem;
+		letter-spacing: 2px;
+		margin-bottom: 16px;
+		display: block;
+	}
+
+	.split-grid {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 80px;
+		align-items: center;
+	}
+
+	.text-block h2 {
+		font-size: 3rem;
+		margin-bottom: 24px;
+	}
+
+	.check-list {
+		list-style: none;
+		padding: 0;
+		margin-top: 32px;
+	}
+
+	.check-list li {
+		padding: 12px 0;
+		display: flex;
+		align-items: center;
+		gap: 15px;
+		font-size: 1.1rem;
+		color: var(--sdai-text-dim);
+	}
+
+	.check-list li::before {
+		content: '✨';
+	}
+
+	.glass-box {
+		background: rgba(255, 255, 255, 0.03);
+		backdrop-filter: blur(16px);
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		padding: 48px;
+		border-radius: 32px;
+		position: relative;
+		overflow: hidden;
+	}
+
+	.neural-box {
+		border-color: rgba(155, 81, 224, 0.3);
+	}
+
+	.section-header {
+		text-align: center;
+		margin-bottom: 60px;
+	}
+
+	.solutions-grid {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 30px;
+	}
+
+	.integration-card {
+		padding: 60px;
+		border-radius: 40px;
+	}
+
+	.integration-grid {
+		display: grid;
+		grid-template-columns: 1.2fr 0.8fr;
+		gap: 40px;
+		align-items: center;
+	}
+
+	.int-text h2 {
+		font-size: 3rem;
+		margin-bottom: 20px;
+	}
+
+	.int-image img {
+		width: 100%;
+		height: auto;
+		filter: drop-shadow(0 0 30px rgba(155, 81, 224, 0.4));
+	}
+
+	@media (max-width: 1024px) {
+		.split-grid, .solutions-grid, .integration-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

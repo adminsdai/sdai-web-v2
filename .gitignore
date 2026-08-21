@@ -1,0 +1,32 @@
+# Dependencies
+node_modules/
+
+# Astro generated
+.astro/
+dist/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# IDE
+.vscode/
+.idea/
+
+# Temporary browser profiles
+chrome_profile/
+tmp_chrome/
+
+# Archives / backups
+*.zip
+*.rar
+*.7z
+
+# Logs
+*.log
+npm-debug.log*
+
+# Operating system
+.DS_Store
+Thumbs.db

@@ -1,0 +1,269 @@
+---
+---
+<section id="contacto" class="contact-section">
+	<div class="container">
+		<div class="contact-grid glass">
+			<div class="contact-info">
+				<h2 class="text-gradient">¿Qué capacidad necesita desarrollar su organización?</h2>
+				<p>Antes de hablar de tecnología, queremos comprender su contexto, sus obligaciones, sus riesgos y sus objetivos. Conversemos sobre el desafío que necesita gobernar.</p>
+				<ul class="contact-details">
+					<li>📍 Santiago, Chile</li>
+					<li>📧 contacto@sdaichile.com</li>
+				</ul>
+			</div>
+			<form class="contact-form" id="contact-form">
+				<div id="form-status" class="form-status hidden">
+					<div class="status-content">
+						<span class="status-icon">✅</span>
+						<p>¡Mensaje enviado con éxito! Nos contactaremos contigo a la brevedad.</p>
+						<button type="button" id="reset-form" class="btn-text">Enviar otro mensaje</button>
+					</div>
+				</div>
+				<div class="form-fields">
+
+				<div class="form-group">
+					<label for="name">Nombre</label>
+					<input type="text" id="name" name="name" placeholder="Tu nombre completo" required />
+				</div>
+				<div class="form-group">
+					<label for="email">Email</label>
+					<input type="email" id="email" name="email" placeholder="tu@email.com" required />
+				</div>
+				<div class="form-group">
+					<label for="message">Mensaje</label>
+					<textarea id="message" name="message" rows="4" placeholder="¿En qué podemos ayudarte?" required></textarea>
+				</div>
+				<div class="form-consent">
+					<input type="checkbox" id="consent" name="consent" required />
+					<label for="consent" class="consent-label">
+						Acepto la <a href="/politica-de-privacidad" target="_blank">Política de Privacidad</a> de SDAI Chile conforme a la Ley N° 21.719 y autorizo el tratamiento de mis datos personales para la gestión de mi consulta.
+					</label>
+				</div>
+					<button type="submit" class="btn-premium">Enviar Mensaje</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</section>
+
+<style>
+	.contact-section {
+		background: var(--sdai-bg-soft);
+	}
+
+	.contact-grid {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 60px;
+		padding: 60px !important;
+		border-radius: 32px;
+	}
+
+	.contact-info h2 {
+		font-size: 2.5rem;
+		margin-bottom: 20px;
+	}
+
+	.contact-info p {
+		color: var(--sdai-text-dim);
+		margin-bottom: 40px;
+		font-size: 1.1rem;
+	}
+
+	.contact-details {
+		list-style: none;
+		padding: 0;
+	}
+
+	.contact-details li {
+		margin-bottom: 15px;
+		font-size: 1.1rem;
+	}
+
+	.contact-form {
+		display: flex;
+		flex-direction: column;
+		gap: 24px;
+	}
+
+	.form-group {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+	}
+
+	label {
+		font-weight: 600;
+		color: var(--sdai-text);
+		font-size: 0.9rem;
+	}
+
+	input, textarea {
+		background: rgba(255, 255, 255, 0.05);
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		border-radius: 12px;
+		padding: 14px;
+		color: white;
+		font-family: inherit;
+		transition: all 0.3s ease;
+	}
+
+	input:focus, textarea:focus {
+		outline: none;
+		border-color: var(--sdai-primary);
+		background: rgba(255, 255, 255, 0.08);
+	}
+
+	.form-consent {
+		display: flex;
+		align-items: flex-start;
+		gap: 12px;
+		margin: 8px 0;
+		text-align: left;
+	}
+
+	.form-consent input[type="checkbox"] {
+		width: 18px;
+		height: 18px;
+		margin-top: 3px;
+		cursor: pointer;
+		accent-color: var(--sdai-primary);
+		flex-shrink: 0;
+	}
+
+	.consent-label {
+		font-size: 0.85rem;
+		font-weight: 400;
+		color: var(--sdai-text-dim);
+		line-height: 1.5;
+	}
+
+	.consent-label a {
+		color: var(--sdai-primary);
+		text-decoration: none;
+		font-weight: 600;
+		transition: text-decoration 0.2s ease;
+	}
+
+	.consent-label a:hover {
+		text-decoration: underline;
+	}
+
+
+	/* Form Status Styles */
+	.form-status {
+		padding: 40px;
+		background: rgba(16, 185, 129, 0.1);
+		border: 1px solid rgba(16, 185, 129, 0.2);
+		border-radius: 16px;
+		text-align: center;
+		animation: fadeIn 0.5s ease;
+	}
+
+	.status-content {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 16px;
+	}
+
+	.status-icon {
+		font-size: 3rem;
+	}
+
+	.btn-text {
+		background: none;
+		border: none;
+		color: var(--sdai-primary);
+		text-decoration: underline;
+		cursor: pointer;
+		font-size: 0.9rem;
+	}
+
+	.hidden {
+		display: none;
+	}
+
+	@keyframes fadeIn {
+		from { opacity: 0; transform: translateY(10px); }
+		to { opacity: 1; transform: translateY(0); }
+	}
+
+	@media (max-width: 900px) {
+		.contact-grid { grid-template-columns: 1fr; padding: 40px !important; }
+	}
+</style>
+
+<script>
+	const form = document.getElementById('contact-form') as HTMLFormElement;
+	const status = document.getElementById('form-status');
+	const fields = form?.querySelector('.form-fields');
+	const resetBtn = document.getElementById('reset-form');
+
+	if (form && status && fields) {
+		form.addEventListener('submit', async (e) => {
+			e.preventDefault();
+			
+			const submitBtn = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+			const originalText = submitBtn.innerText;
+			
+			// UI Loading State
+			submitBtn.disabled = true;
+			submitBtn.innerText = 'Enviando...';
+
+			const formData = new FormData(form);
+			const data = Object.fromEntries(formData);
+			
+			// Registrar consentimiento de forma explícita y guardar el texto legal aceptado
+			const consentCheckbox = form.querySelector('#consent') as HTMLInputElement;
+			data.consent = consentCheckbox ? consentCheckbox.checked : false;
+			data.consentText = "Acepto la Política de Privacidad de SDAI Chile conforme a la Ley N° 21.719 y autorizo el tratamiento de mis datos personales para la gestión de mi consulta.";
+			// Versión de la política vigente al momento de aceptar y página de origen (evidencia Ley N° 21.719)
+			data.policyVersion = "2026-06-22";
+			data.pageUrl = window.location.href;
+
+			try {
+				// Usamos ruta relativa para que funcione tanto local (con proxy) como en producción
+				const response = await fetch('/contact.php', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify(data),
+				});
+
+				// Si el servidor local (ej: Astro Dev Server) no soporta PHP y da un 404/HTML
+				const contentType = response.headers.get('content-type') || '';
+				if (!response.ok || !contentType.includes('application/json')) {
+					if (response.status === 404 || contentType.includes('text/html')) {
+						throw new Error('El servidor local de Astro no procesa archivos PHP. Para probar el envío del formulario localmente, debes ejecutar un servidor PHP (ej. usando php -S localhost:8000 o XAMPP/Laragon) o subir la build a Hostinger.');
+					}
+					throw new Error(`Error HTTP: ${response.status}`);
+				}
+
+				const result = await response.json();
+
+				if (result.status === 'success') {
+					fields.classList.add('hidden');
+					status.classList.remove('hidden');
+					form.reset();
+				} else {
+					throw new Error(result.message || 'Error en el servidor');
+				}
+				
+			} catch (error) {
+				alert('Hubo un problema al enviar el formulario:\n' + error.message);
+				console.error('Error:', error);
+			} finally {
+
+				submitBtn.disabled = false;
+				submitBtn.innerText = originalText;
+			}
+		});
+
+		resetBtn?.addEventListener('click', () => {
+			status.classList.add('hidden');
+			fields.classList.remove('hidden');
+		});
+	}
+</script>

@@ -1,0 +1,223 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Card from '../components/Card.astro';
+import Contact from '../components/Contact.astro';
+
+const pillars = [
+	{ title: "Diagnóstico de Cumplimiento", body: "Evaluamos tu brecha respecto a la Ley Marco de Ciberseguridad (21.663) y estándares ISO." },
+	{ title: "Implementación ISO 27001", body: "Diseñamos un Sistema de Gestión de Seguridad de la Información (SGSI) robusto y certificable." },
+	{ title: "Gestión de Activos", body: "Identificamos y clasificamos tus activos críticos para priorizar la protección donde más importa." },
+	{ title: "Resiliencia Operativa", body: "Desarrollamos planes de continuidad y respuesta ante incidentes para minimizar el impacto." },
+	{ title: "Seguridad en Arquitectura", body: "Diseñamos perímetros de seguridad que protegen el flujo de datos desde el origen." },
+	{ title: "Cultura de Seguridad", body: "Capacitamos a tu equipo para convertir el factor humano en la primera línea de defensa." }
+];
+---
+
+<Layout title="Ciberseguridad Estratégica | SDAI CHILE" description="Gestión de seguridad basada en estándares internacionales y cumplimiento normativo en Chile.">
+	<div class="grid-bg"></div>
+	<main>
+		<!-- Hero Section -->
+		<section class="page-hero">
+			<div class="container">
+				<span class="badge">ISO 27001:2022</span>
+				<h1 class="text-gradient">Ciberseguridad: Blindaje estratégico para tu negocio</h1>
+				<p>La seguridad de la información no es un gasto técnico, es una obligación estratégica, regulatoria y operativa.</p>
+				<a href="#contacto" class="btn-premium">Solicitar Diagnóstico de Seguridad</a>
+			</div>
+		</section>
+
+		<!-- Normative Context -->
+		<section class="content-section">
+			<div class="container">
+				<div class="split-grid">
+					<div class="text-block">
+						<span class="section-label">Marco Legal Chile</span>
+						<h2>Cumplimiento y Continuidad</h2>
+						<p>El nuevo escenario legal en Chile exige una postura proactiva. Tu organización debe alinearse con:</p>
+						<ul class="check-list">
+							<li><strong>Ley 21.663:</strong> Ley Marco de Ciberseguridad.</li>
+							<li><strong>Ley 21.459:</strong> Ley de Delitos Informáticos.</li>
+							<li><strong>Protección de Datos:</strong> Nuevos estándares de privacidad.</li>
+						</ul>
+					</div>
+					<div class="glass-box highlight-box">
+						<h3>¿Está tu empresa preparada?</h3>
+						<p>Una brecha de seguridad no solo cuesta dinero; cuesta reputación y confianza de los stakeholders.</p>
+						<div class="stat-item">
+							<span class="stat-value">ISO 27001</span>
+							<p>Nuestra metodología se basa en estándares globales para una protección real.</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- Services Grid -->
+		<section class="pillars-section">
+			<div class="container">
+				<div class="section-header">
+					<span class="section-label">Nuestros Servicios</span>
+					<h2 class="text-gradient">Gestión integral de riesgos</h2>
+					<p>Protegemos la integridad, disponibilidad y confidencialidad de tus activos más valiosos.</p>
+				</div>
+				<div class="services-grid">
+					{pillars.map(pilar => (
+						<Card title={pilar.title} body={pilar.body} />
+					))}
+				</div>
+			</div>
+		</section>
+
+		<!-- Final CTA -->
+		<section class="cta-banner">
+			<div class="container">
+				<div class="glass banner-inner">
+					<h2>No esperes al primer incidente</h2>
+					<p>La prevención basada en procesos es la única forma sostenible de gestionar el riesgo tecnológico.</p>
+					<a href="#contacto" class="btn-premium">Iniciar Evaluación de Riesgos</a>
+				</div>
+			</div>
+		</section>
+
+		<Contact />
+	</main>
+</Layout>
+
+<style>
+	.grid-bg {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background-image: 
+			linear-gradient(rgba(0, 163, 255, 0.03) 1px, transparent 1px),
+			linear-gradient(90deg, rgba(0, 163, 255, 0.03) 1px, transparent 1px);
+		background-size: 50px 50px;
+		z-index: -1;
+		pointer-events: none;
+	}
+
+	.page-hero {
+		min-height: 70vh;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		text-align: center;
+		padding-top: 150px;
+		background: radial-gradient(circle at 50% 30%, rgba(0, 45, 90, 0.2), transparent 50%);
+	}
+
+	.page-hero h1 {
+		font-size: clamp(2.5rem, 6vw, 4rem);
+		max-width: 900px;
+		margin: 20px auto;
+	}
+
+	.badge {
+		background: rgba(0, 163, 255, 0.1);
+		color: var(--sdai-primary);
+		padding: 8px 16px;
+		border-radius: 100px;
+		font-size: 0.9rem;
+		font-weight: 700;
+	}
+
+	.section-label {
+		color: var(--sdai-primary);
+		font-weight: 700;
+		text-transform: uppercase;
+		font-size: 0.9rem;
+		letter-spacing: 2px;
+		margin-bottom: 16px;
+		display: block;
+	}
+
+	.split-grid {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 80px;
+		align-items: center;
+	}
+
+	.text-block h2 {
+		font-size: 3rem;
+		margin-bottom: 24px;
+	}
+
+	.check-list {
+		list-style: none;
+		padding: 0;
+		margin-top: 32px;
+	}
+
+	.check-list li {
+		padding: 12px 0;
+		display: flex;
+		align-items: center;
+		gap: 15px;
+		font-size: 1.1rem;
+		color: var(--sdai-text-dim);
+	}
+
+	.check-list li::before {
+		content: '🛡️';
+		font-size: 1.2rem;
+	}
+
+	.glass-box {
+		background: rgba(255, 255, 255, 0.03);
+		backdrop-filter: blur(16px);
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		padding: 48px;
+		border-radius: 32px;
+	}
+
+	.highlight-box {
+		border-color: var(--sdai-primary);
+		box-shadow: 0 0 40px rgba(0, 163, 255, 0.1);
+	}
+
+	.stat-item {
+		margin-top: 32px;
+		padding-top: 32px;
+		border-top: 1px solid rgba(255, 255, 255, 0.05);
+	}
+
+	.stat-value {
+		font-family: 'Sora', sans-serif;
+		font-size: 2rem;
+		font-weight: 800;
+		color: var(--sdai-primary);
+		display: block;
+		margin-bottom: 8px;
+	}
+
+	.section-header {
+		text-align: center;
+		margin-bottom: 60px;
+	}
+
+	.services-grid {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 30px;
+	}
+
+	.banner-inner {
+		padding: 80px 40px;
+		border-radius: 40px;
+		background: linear-gradient(135deg, rgba(0, 45, 90, 0.3), rgba(0, 163, 255, 0.05));
+	}
+
+	.banner-inner h2 {
+		font-size: 2.5rem;
+		margin-bottom: 20px;
+	}
+
+	@media (max-width: 1024px) {
+		.split-grid, .services-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>
