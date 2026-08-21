@@ -1,22 +1,26 @@
-name: Deploy SDAI Production
+name: Build SDAI Production
 
 on:
+  push:
+    branches:
+      - main
+
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
-  group: sdai-production
-  cancel-in-progress: false
+  group: sdai-production-build
+  cancel-in-progress: true
 
 jobs:
   build:
-    name: Build & Validate
+    name: Build Production Artifact
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout source
         uses: actions/checkout@v4
 
       - name: Setup Node.js
@@ -31,82 +35,46 @@ jobs:
       - name: Build Astro
         run: npm run build
 
-      - name: Verify production artifact
+      - name: Validate production build
         run: |
           test -f dist/index.html
           test -d dist/_astro
           test -f dist/contact.php
           test -d dist/scan
-          echo "SDAI production artifact validated"
 
-      - name: Security gate - critical vulnerabilities
+          echo "SDAI production build validated"
+
+      - name: Security gate
         run: npm audit --audit-level=critical
 
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: sdai-production-build
-          path: dist/
-          if-no-files-found: error
-          retention-days: 7
+      - name: Prepare production branch
+        run: |
+          rm -rf deploy-output
+          mkdir deploy-output
 
-  deploy:
-    name: Deploy Hostinger
-    needs: build
-    runs-on: ubuntu-latest
-    environment: production
+          cp -a dist/. deploy-output/
 
-    steps:
-      - name: Download production artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: sdai-production-build
-          path: dist
+          echo "=== PRODUCTION ARTIFACT ==="
+          find deploy-output -maxdepth 2 -type f | sort | head -100
 
-      - name: Configure SSH
+      - name: Publish production artifact
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.HOSTINGER_SSH_KEY }}
-          SSH_HOST: ${{ secrets.HOSTINGER_HOST }}
-          SSH_PORT: ${{ secrets.HOSTINGER_PORT }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+          SOURCE_SHA: ${{ github.sha }}
         run: |
-          set -e
-          mkdir -p ~/.ssh
-          chmod 700 ~/.ssh
+          cd deploy-output
 
-          printf "%s" "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
+          git init -b production
 
-          ssh-keyscan -p "$SSH_PORT" "$SSH_HOST" >> ~/.ssh/known_hosts
-          chmod 644 ~/.ssh/known_hosts
+          git config user.name "SDAI Deployment"
+          git config user.email "deploy@sdaichile.com"
 
-      - name: Test Hostinger SSH
-        env:
-          SSH_HOST: ${{ secrets.HOSTINGER_HOST }}
-          SSH_USER: ${{ secrets.HOSTINGER_USER }}
-          SSH_PORT: ${{ secrets.HOSTINGER_PORT }}
-        run: |
-          ssh \
-            -i ~/.ssh/id_ed25519 \
-            -p "$SSH_PORT" \
-            "$SSH_USER@$SSH_HOST" \
-            "echo 'SDAI SSH CONNECTION OK'"
+          git add -A
 
-      - name: Deploy SDAI
-        env:
-          SSH_HOST: ${{ secrets.HOSTINGER_HOST }}
-          SSH_USER: ${{ secrets.HOSTINGER_USER }}
-          SSH_PORT: ${{ secrets.HOSTINGER_PORT }}
-          REMOTE_PATH: ${{ secrets.HOSTINGER_REMOTE_PATH }}
-        run: |
-          rsync -azv \
-            --exclude=".env" \
-            --exclude=".well-known/" \
-            -e "ssh -i ~/.ssh/id_ed25519 -p $SSH_PORT" \
-            dist/ \
-            "$SSH_USER@$SSH_HOST:$REMOTE_PATH/"
+          git commit -m "deploy: ${SOURCE_SHA}"
 
-      - name: Deployment completed
-        run: |
-          echo "====================================="
-          echo "SDAI PRODUCTION DEPLOYMENT COMPLETED"
-          echo "====================================="
+          git remote add origin \
+            "https://x-access-token:${GH_TOKEN}@github.com/${REPOSITORY}.git"
+
+          git push --force origin production
