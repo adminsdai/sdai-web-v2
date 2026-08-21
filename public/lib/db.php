@@ -66,9 +66,11 @@ class Database {
             self::$pdo = new PDO($dsn, $config['DB_USER'], $config['DB_PASSWORD'], $options);
             return self::$pdo;
         } catch (PDOException $e) {
-            error_log("Error de conexión PDO MySQL: " . $e->getMessage());
-            header('Content-Type: application/json', true, 500);
-            echo json_encode(['error' => 'Error de conexión a MySQL en Hostinger: ' . $e->getMessage()]);
+            error_log('[SDAI DB] Error de conexión PDO: ' . $e->getMessage());
+            header('Content-Type: application/json; charset=utf-8', true, 500);
+            echo json_encode([
+            'error' => 'No fue posible procesar la solicitud.'
+            ]);
             exit;
         }
     }

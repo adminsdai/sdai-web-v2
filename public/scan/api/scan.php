@@ -1,6 +1,5 @@
 <?php
 header('Content-Type: application/json; charset=utf-8');
-header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 
@@ -93,8 +92,11 @@ try {
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($ch, CURLOPT_MAXREDIRS, 3);
         curl_setopt($ch, CURLOPT_TIMEOUT, 15);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
         curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
+        curl_setopt($ch, CURLOPT_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);
+        curl_setopt($ch, CURLOPT_REDIR_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);
 
         $response = curl_exec($ch);
         $headerSize = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
@@ -470,11 +472,10 @@ try {
             'trackers' => $allTrackers
         ]
     ]);
-} catch (Exception $e) {
-    error_log("Crawl Endpoint Error: " . $e->getMessage());
+} catch (Throwable $e) {
+    error_log('[SDAI SCAN] Crawl Endpoint Error: ' . $e->getMessage());
     http_response_code(500);
     echo json_encode([
-        'error' => 'Error al realizar el escaneo del dominio',
-        'details' => $e->getMessage()
+        'error' => 'No fue posible completar la evaluación del dominio.'
     ]);
 }

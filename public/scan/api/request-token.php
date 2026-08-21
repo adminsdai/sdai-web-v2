@@ -5,7 +5,6 @@
  * Valida que el dominio del email coincida con el dominio a escanear.
  */
 header('Content-Type: application/json; charset=utf-8');
-header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 
