@@ -91,7 +91,12 @@ jobs:
           HOSTINGER_DEPLOY_PATH: ${{ secrets.HOSTINGER_DEPLOY_PATH }}
         run: |
           set -euo pipefail
-          rsync -az --delete \
+          rsync -az \
+            --exclude='.env' \
+            --exclude='.git/' \
+            --exclude='crm/' \
+            --exclude='kanban/' \
+            --exclude='contact_logs.txt' \
             -e "ssh -i ~/.ssh/id_ed25519 -p $HOSTINGER_PORT" \
             dist/ "$HOSTINGER_USER@$HOSTINGER_HOST:$HOSTINGER_DEPLOY_PATH/"
           echo "SDAI production deployment completed"
