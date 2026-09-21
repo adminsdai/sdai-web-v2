@@ -1,0 +1,50 @@
+name: SDAI CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sdai-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate, Audit and Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Security gate - critical
+        run: npm audit --audit-level=critical
+
+      - name: Build production artifact
+        run: npm run build
+
+      - name: Validate production artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f dist/index.html
+          test -d dist/_astro
+          test -f dist/contact.php
+          test -d dist/scan
+          test -f dist/pyme/index.html
+          echo "SDAI CI validation completed successfully"
