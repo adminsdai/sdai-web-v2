@@ -1,27 +1,44 @@
-name: Build SDAI Production
+name: SDAI Deploy Production
 
 on:
-  push:
-    branches:
-      - main
-
+  workflow_run:
+    workflows: ["SDAI CI"]
+    types: [completed]
+    branches: [main]
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
-  group: sdai-production-build
-  cancel-in-progress: true
+  group: sdai-web-production
+  cancel-in-progress: false
 
 jobs:
-  build:
-    name: Build Production Artifact
+  deploy:
+    name: Deploy sdaichile.com
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.head_branch == 'main')
     runs-on: ubuntu-latest
+    environment: production
 
     steps:
-      - name: Checkout source
+      - name: Resolve source revision
+        id: revision
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_run" ]; then
+            echo "sha=${{ github.event.workflow_run.head_sha }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "sha=${{ github.sha }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Checkout validated source
         uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.revision.outputs.sha }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -29,52 +46,52 @@ jobs:
           node-version: 22
           cache: npm
 
-      - name: Install dependencies
+      - name: Install locked dependencies
         run: npm ci
 
-      - name: Build Astro
+      - name: Rebuild production artifact
         run: npm run build
 
-      - name: Validate production build
-        run: |
-          test -f dist/index.html
-          test -d dist/_astro
-          test -f dist/contact.php
-          test -d dist/scan
-
-          echo "SDAI production build validated"
-
-      - name: Security gate
-        run: npm audit --audit-level=critical
-
-      - name: Prepare production branch
-        run: |
-          rm -rf deploy-output
-          mkdir deploy-output
-
-          cp -a dist/. deploy-output/
-
-          echo "=== PRODUCTION ARTIFACT ==="
-          find deploy-output -maxdepth 2 -type f | sort | head -100
-
-      - name: Publish production artifact
+      - name: Validate deployment secrets
+        shell: bash
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REPOSITORY: ${{ github.repository }}
-          SOURCE_SHA: ${{ github.sha }}
+          HOST: ${{ secrets.HOSTINGER_HOST }}
+          PORT: ${{ secrets.HOSTINGER_PORT }}
+          USER: ${{ secrets.HOSTINGER_USER }}
+          KEY: ${{ secrets.HOSTINGER_SSH_KEY }}
+          DEPLOY_PATH: ${{ secrets.HOSTINGER_DEPLOY_PATH }}
         run: |
-          cd deploy-output
+          set -euo pipefail
+          test -n "$HOST"
+          test -n "$PORT"
+          test -n "$USER"
+          test -n "$KEY"
+          test -n "$DEPLOY_PATH"
 
-          git init -b production
+      - name: Configure SSH
+        shell: bash
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.HOSTINGER_SSH_KEY }}
+          HOSTINGER_HOST: ${{ secrets.HOSTINGER_HOST }}
+          HOSTINGER_PORT: ${{ secrets.HOSTINGER_PORT }}
+        run: |
+          set -euo pipefail
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -p "$HOSTINGER_PORT" -H "$HOSTINGER_HOST" >> ~/.ssh/known_hosts
+          ssh-keygen -y -f ~/.ssh/id_ed25519 >/dev/null
 
-          git config user.name "SDAI Deployment"
-          git config user.email "deploy@sdaichile.com"
-
-          git add -A
-
-          git commit -m "deploy: ${SOURCE_SHA}"
-
-          git remote add origin \
-            "https://x-access-token:${GH_TOKEN}@github.com/${REPOSITORY}.git"
-
-          git push --force origin production
+      - name: Deploy with rsync over SSH
+        shell: bash
+        env:
+          HOSTINGER_HOST: ${{ secrets.HOSTINGER_HOST }}
+          HOSTINGER_PORT: ${{ secrets.HOSTINGER_PORT }}
+          HOSTINGER_USER: ${{ secrets.HOSTINGER_USER }}
+          HOSTINGER_DEPLOY_PATH: ${{ secrets.HOSTINGER_DEPLOY_PATH }}
+        run: |
+          set -euo pipefail
+          rsync -az --delete \
+            -e "ssh -i ~/.ssh/id_ed25519 -p $HOSTINGER_PORT" \
+            dist/ "$HOSTINGER_USER@$HOSTINGER_HOST:$HOSTINGER_DEPLOY_PATH/"
+          echo "SDAI production deployment completed"
