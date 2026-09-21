@@ -1,10 +1,129 @@
 ---
 import Layout from '../layouts/Layout.astro';
+
+const dimensions = [
+  { n:'01', k:'IA', title:'Tu equipo ya está utilizando IA.', body:'¿Sabes qué herramientas utiliza y qué información de la empresa está compartiendo con ellas?' },
+  { n:'02', k:'PRIVACIDAD', title:'Tus clientes te confían sus datos.', body:'¿Sabes cuáles almacenas, dónde están, quién accede a ellos y para qué los utilizas?' },
+  { n:'03', k:'CIBERSEGURIDAD', title:'Tu operación depende de tecnología.', body:'¿Conoces tus sistemas críticos, accesos, dispositivos, proveedores y principales exposiciones?' },
+  { n:'04', k:'CONTINUIDAD', title:'Un incidente puede detener tu negocio.', body:'¿Sabes cuánto tardarías en recuperar tu información y volver a operar?' }
+];
+
+const method = [
+  ['01','RADAR','¿Qué está cambiando?','Observamos el contexto regulatorio, tecnológico y de riesgo que puede afectar a tu empresa.'],
+  ['02','ASSESSMENT','¿Dónde estamos?','Evaluamos de manera proporcional la situación actual de tu empresa.'],
+  ['03','PRIORIDAD','¿Qué hacemos primero?','Transformamos hallazgos en un conjunto reducido de acciones que realmente importan.'],
+  ['04','ACCIÓN','Avancemos.','Acompañamos la implementación de las mejoras priorizadas.'],
+  ['05','EVIDENCIA','¿Cómo demostramos el avance?','Construimos evidencia de las capacidades que la organización va desarrollando.'],
+  ['06','EVOLUCIÓN','¿Qué sigue?','Revisamos el escenario y definimos el siguiente paso.']
+];
+
+const maturity = [['L1','INICIAL'],['L2','DEFINIDO'],['L3','IMPLEMENTADO'],['L4','GESTIONADO'],['L5','OPTIMIZADO']];
+
+const schema = {
+  '@context':'https://schema.org',
+  '@type':'Service',
+  name:'SDAI PYME',
+  description:'Acompañamiento estratégico para PYMEs en Chile frente a inteligencia artificial, datos, privacidad, ciberseguridad y continuidad.',
+  provider:{'@type':'Organization',name:'SDAI Chile SpA',url:'https://sdaichile.com/'},
+  areaServed:{'@type':'Country',name:'Chile'},
+  audience:{'@type':'BusinessAudience',audienceType:'Pequeñas y medianas empresas'}
+};
 ---
-<Layout title="SDAI PYME | Ruta Data Driven" description="De la obligación regulatoria a una empresa gobernada por datos.">
+
+<Layout title="SDAI PYME | IA, Privacidad y Ciberseguridad para PYMEs en Chile" description="Acompañamiento SDAI para PYMEs frente a inteligencia artificial, protección de datos, ciberseguridad y nuevos desafíos digitales. Entiende qué afecta a tu empresa y qué deberías priorizar.">
+<script type="application/ld+json" set:html={JSON.stringify(schema)}></script>
 <main class="pyme-page">
-<section class="pyme-hero"><div class="container"><span>VERTICAL SDAI PYME</span><h1>De la obligación regulatoria a una empresa <em>gobernada por datos.</em></h1><p>No necesita convertirse en una gran empresa para comenzar a gobernar sus datos. Ordene, proteja y utilice mejor la información que su empresa ya genera.</p><div class="route">CONOCER <b>→</b> PROTEGER <b>→</b> GOBERNAR <b>→</b> MEDIR <b>→</b> DECIDIR <b>→</b> CRECER</div><a href="/#contacto" class="btn-premium">Conversemos sobre su empresa</a></div></section>
-<section><div class="container"><div class="coming glass"><span>EN CONSTRUCCIÓN CONTROLADA</span><h2>Estamos preparando la Ruta Data Driven PYME.</h2><p>Esta vertical integrará cumplimiento, privacidad, seguridad, gobernanza de datos y madurez empresarial en una ruta simple, progresiva y medible.</p><a href="/scan" class="text-link">Conocer nuestra evaluación actual →</a></div></div></section>
+
+<section class="hero">
+  <div class="container hero-inner">
+    <span class="label">SDAI PYME · ACOMPAÑAMIENTO ESTRATÉGICO</span>
+    <h1>¿Tu empresa está preparada <em>para lo que viene?</em></h1>
+    <p class="lead">IA, protección de datos y ciberseguridad están cambiando la forma de operar de las empresas.</p>
+    <p>No necesitas convertirte en especialista ni comenzar por una certificación. <strong>SDAI te ayuda a entender qué está cambiando, qué realmente afecta a tu empresa y qué deberías hacer primero.</strong></p>
+    <div class="tags"><span>IA</span><b>·</b><span>DATOS</span><b>·</b><span>PRIVACIDAD</span><b>·</b><span>CIBERSEGURIDAD</span></div>
+    <div class="actions"><a href="#diagnostico" class="btn-premium">Evaluar mi empresa</a><a href="#metodo" class="ghost">Conocer cómo funciona ↓</a></div>
+    <div class="flow">{['CONTEXTO','RIESGO','PRIORIDAD','ACCIÓN','EVIDENCIA','EVOLUCIÓN'].map((x,i)=><><span>{x}</span>{i<5&&<b>→</b>}</>)}</div>
+  </div>
+</section>
+
+<section class="reality">
+  <div class="container">
+    <span class="label line">UNA NUEVA REALIDAD DIGITAL</span>
+    <div class="intro"><h2>Tu empresa probablemente <em>ya está cambiando.</em></h2><p>La transformación muchas veces ya está ocurriendo dentro de tu operación, tus datos, tus proveedores y las decisiones de tu equipo.</p></div>
+    <div class="grid4">{dimensions.map(d=><article class="glass card"><div class="card-head"><span>{d.n}</span><b>{d.k}</b></div><h3>{d.title}</h3><p>{d.body}</p></article>)}</div>
+    <div class="statement"><p>No todo tiene la misma urgencia.</p><h3>No todas las empresas necesitan hacer lo mismo.</h3></div>
+  </div>
+</section>
+
+<section class="proposal">
+  <div class="container two">
+    <div><span class="label line">SDAI PYME</span><h2>No vendemos cumplimiento <em>por cumplimiento.</em></h2><h3 class="gold">Te ayudamos a prepararte.</h3></div>
+    <div class="copy"><p>SDAI PYME es un modelo de acompañamiento para que pequeñas y medianas empresas puedan avanzar progresivamente frente a cambios regulatorios y tecnológicos.</p>
+      <div class="without"><div><b>SIN</b><span>comenzar por una certificación.</span></div><div><b>SIN</b><span>convertir tu empresa en un proyecto interminable.</span></div><div><b>SIN</b><span>intentar resolver todo al mismo tiempo.</span></div></div>
+      <p class="manifesto">Entender primero. <strong>Priorizar después. Avanzar con evidencia.</strong></p>
+    </div>
+  </div>
+</section>
+
+<section id="metodo" class="method">
+  <div class="container">
+    <span class="label line">CÓMO FUNCIONA</span>
+    <div class="intro"><h2>Un camino <em>progresivo.</em></h2><p>Transformamos un escenario complejo en una secuencia comprensible de decisiones y acciones.</p></div>
+    <div class="method-grid">{method.map((m)=><article><div><span>{m[0]}</span><b>{m[1]}</b></div><h3>{m[2]}</h3><p>{m[3]}</p></article>)}</div>
+    <div class="method-flow">RADAR <b>→</b> ASSESSMENT <b>→</b> PRIORIDAD <b>→</b> ACCIÓN <b>→</b> EVIDENCIA <b>→</b> EVOLUCIÓN</div>
+  </div>
+</section>
+
+<section id="diagnostico" class="diagnostic-wrap">
+  <div class="container">
+    <div class="diagnostic glass">
+      <div><span class="label line">TU PRIMER PASO</span><h2>¿Qué tan preparada está <em>tu empresa?</em></h2><h3>Comienza con el Diagnóstico Inicial SDAI PYME.</h3><p>Una revisión ejecutiva para obtener una primera visión sobre cinco dimensiones relevantes de tu operación digital.</p><div class="chips"><span>IA</span><span>DATOS</span><span>PRIVACIDAD</span><span>CIBERSEGURIDAD</span><span>CONTINUIDAD</span></div></div>
+      <div class="questions"><span class="label">BUSCAMOS RESPONDER</span><ol><li><b>01</b> ¿Dónde estamos?</li><li><b>02</b> ¿Qué debería preocuparnos?</li><li><b>03</b> ¿Qué deberíamos hacer primero?</li><li><b>04</b> ¿Qué puede esperar?</li></ol><a href="/#contacto" class="btn-premium">Solicitar diagnóstico SDAI PYME</a><small>Sin certificaciones. Sin compromisos innecesarios. Comencemos por entender.</small></div>
+    </div>
+  </div>
+</section>
+
+<section class="maturity">
+  <div class="container">
+    <span class="label line">NO BUSCAMOS PERFECCIÓN</span>
+    <div class="intro"><h2>Buscamos <em>evolución.</em></h2><p>Tu empresa no necesita alcanzar inmediatamente el máximo nivel. Necesita desarrollar las capacidades adecuadas para su realidad, sus riesgos y sus objetivos.</p></div>
+    <div class="maturity-track">{maturity.map((m,i)=><div class="m-step"><div class="dot">{i+1}</div><b>{m[0]}</b><span>{m[1]}</span></div>)}</div>
+  </div>
+</section>
+
+<section class="companion">
+  <div class="container">
+    <span class="label line">ACOMPAÑAMIENTO</span>
+    <div class="intro"><h2>El diagnóstico no es el final. <em>Es donde comienza el trabajo.</em></h2><p>Después de conocer dónde estamos, SDAI acompaña periódicamente a la organización para mantener el foco y convertir decisiones en capacidades.</p></div>
+    <div class="grid4 mini"><article><span>01</span><b>RADAR</b><h3>¿Qué cambió?</h3></article><article><span>02</span><b>PRIORIDADES</b><h3>¿Qué resolvemos ahora?</h3></article><article><span>03</span><b>ACCIONES</b><h3>¿Qué estamos haciendo?</h3></article><article><span>04</span><b>EVIDENCIAS</b><h3>¿Qué capacidad construimos?</h3></article></div>
+    <div class="companion-close">No te dejamos con una lista de brechas. <strong>Construimos contigo una ruta de evolución.</strong></div>
+  </div>
+</section>
+
+<section class="framework">
+  <div class="container two">
+    <div><span class="label line">SDAI TRUST FRAMEWORK™</span><h2>Una propuesta simple para la PYME. <em>Una arquitectura seria detrás.</em></h2><p>SDAI PYME adapta nuestro enfoque de desarrollo de capacidades organizacionales estratégicas a la realidad de pequeñas y medianas empresas.</p><div class="rigor">No reducimos el rigor.<br/><strong>Ajustamos la profundidad.</strong></div></div>
+    <div class="chain glass">{['PRINCIPIOS','CULTURA','GOBERNANZA','DECISIONES','TECNOLOGÍA','ARQUITECTURA','CONFIANZA','VALOR SOSTENIBLE'].map((x,i)=><div><span>{String(i+1).padStart(2,'0')}</span><b>{x}</b></div>)}</div>
+  </div>
+</section>
+
+<section class="final">
+  <div class="container"><div class="future"><span>IA seguirá evolucionando.</span><span>Las regulaciones seguirán cambiando.</span><span>Los datos seguirán creciendo.</span><span>Las amenazas seguirán apareciendo.</span></div><p>Pero tu empresa no necesita resolverlo todo hoy.</p><h2>Necesita saber cuál es <em>el próximo paso.</em></h2><a href="/#contacto" class="btn-premium">Comenzar con SDAI PYME</a><div class="signature"><b>SDAI PYME</b><span>Preparación para la nueva realidad digital de tu empresa.</span></div></div>
+</section>
+
 </main>
 </Layout>
-<style>.pyme-hero{min-height:78vh;padding-top:170px;background:radial-gradient(circle at 75% 35%,rgba(37,99,235,.16),transparent 35%),linear-gradient(145deg,#020617,#061126)}.pyme-hero span,.coming span{color:#38bdf8;font-weight:800;letter-spacing:.16em;font-size:.74rem}.pyme-hero h1{font-size:clamp(3rem,7vw,6rem);line-height:1;max-width:1050px;margin:20px 0 28px}.pyme-hero em{font-style:normal;color:#38bdf8}.pyme-hero p{font-size:1.2rem;color:#94a3b8}.route{margin:34px 0;color:#e2e8f0;font-size:.8rem;letter-spacing:.08em;display:flex;gap:10px;flex-wrap:wrap}.route b{color:#d7a84b}.coming{max-width:850px;margin:auto;padding:50px;border-radius:24px}.coming h2{font-size:2.2rem;margin:18px 0}.coming p{color:#94a3b8}.text-link{color:#38bdf8;text-decoration:none;font-weight:700}</style>
+
+<style>
+.pyme-page{background:#020617}.pyme-page section{position:relative}.label{display:inline-flex;align-items:center;gap:10px;color:#38bdf8;font-weight:800;letter-spacing:.18em;font-size:.72rem}.label.line:before{content:"";width:28px;height:1px;background:#d7a84b}.hero{min-height:94vh;padding:180px 0 90px;display:flex;align-items:center;overflow:hidden;background:radial-gradient(circle at 78% 32%,rgba(37,99,235,.18),transparent 35%),linear-gradient(145deg,#020617,#041027 58%,#061126)}.hero-inner{position:relative;z-index:2}.hero h1{font-size:clamp(3.1rem,7vw,6.5rem);line-height:.98;letter-spacing:-.055em;max-width:1080px;margin:22px 0 30px}.pyme-page em{font-style:normal;color:#38bdf8}.hero .lead{font-size:clamp(1.2rem,2.2vw,1.6rem);color:#e2e8f0;max-width:820px;margin-bottom:12px}.hero p:not(.lead){color:#94a3b8;font-size:1.03rem;max-width:820px}.hero p strong{color:#cbd5e1}.tags,.flow{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.tags{margin:30px 0;font-size:.76rem;font-weight:800;letter-spacing:.13em}.tags b,.flow b,.method-flow b{color:#d7a84b}.actions{display:flex;gap:22px;align-items:center;flex-wrap:wrap}.ghost{color:#cbd5e1;text-decoration:none;font-weight:700;font-size:.9rem}.ghost:hover{color:#38bdf8}.flow{margin-top:72px;padding-top:24px;border-top:1px solid rgba(56,189,248,.16);font-size:.68rem;letter-spacing:.11em;color:#cbd5e1}
+.reality{background:linear-gradient(180deg,#020617,#061126)}.intro{display:grid;grid-template-columns:1.1fr .9fr;gap:70px;align-items:end;margin:20px 0 54px}.intro h2,.proposal h2,.diagnostic h2,.framework h2,.final h2{font-size:clamp(2.4rem,5vw,4.5rem);line-height:1.04;letter-spacing:-.04em}.intro p,.copy>p,.framework p{color:#94a3b8;font-size:1.08rem;margin:0}.grid4{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}.card{padding:34px;border-radius:22px}.card-head{display:flex;justify-content:space-between;margin-bottom:38px}.card-head span,.mini article>span{color:#d7a84b;font-size:.7rem}.card-head b,.mini article>b{color:#38bdf8;font-size:.7rem;letter-spacing:.13em}.card h3{font-size:1.45rem}.card p{color:#94a3b8}.statement{margin-top:60px;text-align:center;padding:36px;border-block:1px solid rgba(56,189,248,.18)}.statement p{margin:0 auto 8px;color:#94a3b8}.statement h3{font-size:clamp(1.7rem,3vw,2.7rem)}
+.proposal{background:radial-gradient(circle at 15% 35%,rgba(37,99,235,.13),transparent 35%),#030a18}.two{display:grid;grid-template-columns:1fr 1fr;gap:80px}.gold{color:#d7a84b;font-size:clamp(1.6rem,3vw,2.5rem);margin-top:22px}.without{margin:34px 0}.without div{display:grid;grid-template-columns:56px 1fr;gap:14px;padding:17px 0;border-bottom:1px solid rgba(148,163,184,.1)}.without b{color:#d7a84b}.manifesto{font-family:'Sora';color:#fff!important;font-size:1.18rem!important}.manifesto strong{color:#38bdf8}
+.method{background:#020817}.method-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.method-grid article{padding:30px;border:1px solid rgba(148,163,184,.12);border-radius:20px;background:rgba(255,255,255,.025);min-height:225px}.method-grid article>div{display:flex;justify-content:space-between}.method-grid article>div span{color:#d7a84b;font-size:.7rem}.method-grid article>div b{color:#38bdf8;font-size:.7rem;letter-spacing:.12em}.method-grid h3{font-size:1.22rem;margin:34px 0 12px}.method-grid p{color:#94a3b8;font-size:.94rem}.method-flow{margin-top:38px;text-align:center;color:#cbd5e1;font-size:.7rem;letter-spacing:.08em}
+.diagnostic-wrap{background:linear-gradient(180deg,#020817,#061126)}.diagnostic{display:grid;grid-template-columns:1.08fr .92fr;gap:50px;padding:54px;border-radius:28px;border-color:rgba(56,189,248,.2)}.diagnostic h3{font-size:1.3rem;margin:20px 0 14px}.diagnostic p{color:#94a3b8}.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:26px}.chips span{padding:8px 12px;border:1px solid rgba(56,189,248,.22);border-radius:999px;color:#93c5fd;font-size:.7rem;font-weight:700}.questions{padding:28px;background:rgba(2,6,23,.58);border-radius:20px}.questions ol{list-style:none;padding:0;margin:18px 0 28px}.questions li{padding:13px 0;border-bottom:1px solid rgba(148,163,184,.1)}.questions li b{color:#d7a84b;margin-right:12px;font-size:.7rem}.questions small{display:block;color:#64748b;margin-top:16px;line-height:1.5}
+.maturity{background:#020617}.maturity-track{display:grid;grid-template-columns:repeat(5,1fr);margin-top:30px}.m-step{position:relative;text-align:center;display:flex;flex-direction:column;gap:4px}.m-step:before{content:"";position:absolute;top:23px;left:-50%;width:100%;height:1px;background:linear-gradient(90deg,#2563eb,#38bdf8)}.m-step:first-child:before{display:none}.dot{position:relative;z-index:1;width:46px;height:46px;margin:0 auto 10px;border:1px solid #38bdf8;background:#041027;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#38bdf8;font-weight:800}.m-step b{color:#d7a84b;font-size:.7rem}.m-step span{color:#cbd5e1;font-size:.72rem}
+.companion{background:linear-gradient(180deg,#020617,#061126)}.mini{grid-template-columns:repeat(4,1fr)}.mini article{padding:28px;border:1px solid rgba(148,163,184,.12);border-radius:18px;background:rgba(255,255,255,.02)}.mini article>b{display:block;margin:20px 0 8px}.mini h3{font-size:1.08rem}.companion-close{margin-top:34px;padding:26px;text-align:center;border:1px solid rgba(215,168,75,.18);border-radius:18px;color:#94a3b8}.companion-close strong{color:#fff}
+.framework{background:radial-gradient(circle at 20% 40%,rgba(14,165,233,.09),transparent 35%),#020817}.framework .two{align-items:center}.rigor{margin-top:34px;padding:24px;border-left:2px solid #d7a84b;font-family:'Sora';font-size:1.35rem;background:linear-gradient(90deg,rgba(215,168,75,.06),transparent)}.rigor strong{color:#38bdf8}.chain{padding:24px;border-radius:22px}.chain>div{display:grid;grid-template-columns:44px 1fr;gap:12px;padding:13px 8px;border-bottom:1px solid rgba(148,163,184,.08)}.chain>div:last-child{border-bottom:0}.chain span{color:#d7a84b;font-size:.68rem}.chain b{font-size:.82rem;letter-spacing:.1em}
+.final{text-align:center;background:radial-gradient(circle at 50% 35%,rgba(37,99,235,.16),transparent 45%),#020617;padding:130px 0!important}.future{display:flex;justify-content:center;gap:10px 20px;flex-wrap:wrap;margin-bottom:38px}.future span{color:#64748b;font-size:.78rem}.final p{margin:0 auto 16px;color:#94a3b8}.final h2{max-width:900px;margin:0 auto 34px}.signature{margin-top:52px;display:flex;flex-direction:column;gap:7px}.signature b{letter-spacing:.18em;color:#38bdf8}.signature span{color:#64748b;font-size:.82rem}
+@media(max-width:950px){.intro,.two,.diagnostic{grid-template-columns:1fr;gap:34px}.method-grid{grid-template-columns:repeat(2,1fr)}.mini{grid-template-columns:repeat(2,1fr)}.maturity-track{grid-template-columns:1fr;gap:14px}.m-step{display:grid;grid-template-columns:46px auto 1fr;align-items:center;text-align:left;gap:16px}.m-step:before{display:none}.dot{margin:0}.m-step b{margin-left:4px}}
+@media(max-width:640px){.hero{padding-top:145px;min-height:auto}.hero h1{font-size:clamp(2.8rem,14vw,4.3rem)}.actions{align-items:flex-start;flex-direction:column}.flow{margin-top:52px}.grid4,.method-grid,.mini{grid-template-columns:1fr}.diagnostic{padding:28px}.questions{padding:20px}.intro{gap:20px}.two{gap:42px}.future{flex-direction:column}.final{padding:90px 0!important}}
+</style>
