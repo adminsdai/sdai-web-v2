@@ -23,7 +23,7 @@ Este registro conserva decisiones y hallazgos para evitar que futuras reformulac
 **Motivo:** la complejidad general de la organización no determina por sí sola el esfuerzo de un alcance específico.
 
 ## 2026-09-23 — KB-DEC-006
-**Decisión:** SRV-CON-001 será el servicio patrón para validar el modelo ACT → PRF → HH → RATE antes de replicarlo en el resto del catálogo.
+**Decisión:** SRV-CON-001 será el servicio patrón para validar ACT → PRF → HH → RATE antes de replicarlo.
 
 ## 2026-09-23 — KB-DEC-007
 **Decisión:** el valor técnico calculado por HH × tarifa no equivale automáticamente a precio comercial.
@@ -31,6 +31,22 @@ Este registro conserva decisiones y hallazgos para evitar que futuras reformulac
 ## 2026-09-23 — KB-DEC-008
 **Decisión:** una prueba de recuperación fallida se conserva como evidencia de brecha y no habilita artificialmente la madurez objetivo.
 
+## 2026-09-23 — KB-DEC-009
+**Decisión:** MODEL-CPLX-001 v1.1 establece CPLX-ORG como contexto y CPLX-SRV como determinante del esfuerzo del alcance.  
+**Regla:** CPLX-ORG no multiplica HH.
+
+## 2026-09-23 — KB-DEC-010
+**Decisión:** no usar multiplicadores globales T1/T2/T3 para HH. Cada ACT mantiene su propia curva de esfuerzo por complejidad.
+
+## 2026-09-23 — KB-DEC-011
+**Decisión:** desde la primera ejecución se registra Estimated vs Actual por actividad.  
+**Mínimo:** HH estimadas, HH reales, desviación y causa.  
+**Objetivo:** convertir experiencia de ejecución en evidencia para evolución gobernada.
+
+## 2026-09-23 — KB-DEC-012
+**Decisión:** MODEL-CPLX-001 v1.1 + MODEL-EXEC-001 v1.0 constituyen el piso operacional del futuro motor de cubicación.  
+**Regla:** ningún ajuste automático de estimaciones o complejidad se realiza sin evidencia acumulada y Governance Review.
+
 ## Próxima revisión
 
-Validar MODEL-CPLX-001 y SRV-CON-001 contra casos reales. Registrar desviaciones entre HH estimadas y ejecutadas antes de automatizar el motor de cotización.
+Aplicar MODEL-CPLX-001 v1.1 y MODEL-EXEC-001 v1.0 a SRV-CON-001 en casos reales. Revisar desviaciones antes de modificar umbrales, actividades o HH baseline.
