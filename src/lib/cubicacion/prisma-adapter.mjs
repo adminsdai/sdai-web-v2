@@ -34,6 +34,7 @@ export async function cubicFromCatalog({
         .sort((x,y)=>y.effectiveFrom-x.effectiveFrom);
       if (!rates[0]) throw new Error(`No effective rate for ${a.primaryProfile.code}`);
       return {
+        id:a.id,
         code:a.code,
         name:a.name,
         front:a.front,
