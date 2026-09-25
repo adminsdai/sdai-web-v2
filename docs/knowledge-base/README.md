@@ -31,6 +31,8 @@ Esta Knowledge Base **no reemplaza el canon institucional SDAI**. FOUNDATION-001
 - `03-modelo-complejidad.md`: CPLX-ORG y CPLX-SRV.
 - `04-servicios-perfiles-tarifas.md`: catálogo comercial y parámetros económicos.
 - `05-srv-con-001-continuidad-recuperacion.md`: primer servicio patrón.
+- `06-modelo-ejecucion-estimated-actual.md`: aprendizaje Estimated vs Actual por actividad.
+- `07-motor-cubicacion.md`: MODEL-COST-001, diseño del motor de cubicación y brecha neta.
 - `DECISIONS.md`: registro cronológico de decisiones y hallazgos.
 
 ## Estados documentales
