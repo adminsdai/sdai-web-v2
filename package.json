@@ -9,7 +9,9 @@
     "preview": "astro preview",
     "astro": "astro",
     "db:push": "prisma db push",
-    "db:generate": "prisma generate"
+    "db:generate": "prisma generate",
+    "cost:test": "node src/lib/cubicacion/engine.test.mjs",
+    "cost:seed": "node prisma/seed-cost-engine.mjs"
   },
   "dependencies": {
     "@prisma/client": "^6.19.3",
