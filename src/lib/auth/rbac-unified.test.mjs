@@ -1,4 +1,4 @@
-import { can, assertPermission } from "./rbac.mjs";
+import { can, assertPermission } from "./rbac-unified.mjs";
 const cases=[
  [["ADMIN"],"identity:users",true],
  [["CONSULTOR"],"motor:execute",true],
