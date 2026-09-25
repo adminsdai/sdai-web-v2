@@ -72,7 +72,7 @@ export const CS002_ACTIVITIES = Object.freeze([
 export function calculateActivity(activity, rates = RATES_UF) {
   const rate = rates[activity.profile];
   if (rate == null) throw new Error(`Missing rate for profile ${activity.profile}`);
-  return { ...activity, rateUf: rate, technicalUf: activity.hh * rate };
+  // Monetary rule: each ACT is valued and rounded to 2 decimals before aggregation.\n  // This preserves auditable line-item UF values and reproduces the governed CS-002 cubicacion.\n  const technicalUf = Math.round((activity.hh * rate + Number.EPSILON) * 100) / 100;\n  return { ...activity, rateUf: rate, technicalUf };
 }
 
 export function consolidateActivities(activities) {
