@@ -12,14 +12,14 @@ $envFile = __DIR__ . '/../.env';
 if (!file_exists($envFile)) {
     $envFile = __DIR__ . '/.env';
 }
-$adminPassword = "SdaiSuperSecureAdminPass2026!"; // Valor por defecto si no hay .env
+$adminPassword = getenv('ADMIN_PASSWORD') ?: null; // Sin credencial por defecto: fail closed
 
 if (file_exists($envFile)) {
     $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
     foreach ($lines as $line) {
         if (strpos(trim($line), '#') === 0) continue;
         list($name, $value) = explode('=', $line, 2);
-        if (trim($name) === 'ADMIN_PASSWORD') {
+        if (trim($name) === 'ADMIN_PASSWORD' && !$adminPassword) {
             $adminPassword = trim($value, '"\' ');
         }
     }
@@ -36,7 +36,7 @@ if (isset($_GET['logout'])) {
 $loginError = "";
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'login') {
     $password = isset($_POST['password']) ? $_POST['password'] : '';
-    if ($password === $adminPassword) {
+    if ($adminPassword && hash_equals($adminPassword, $password)) {
         $_SESSION['sdai_auth'] = true;
         header("Location: admin-dashboard.php");
         exit();
