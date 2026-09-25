@@ -35,6 +35,28 @@ jobs:
       - name: Security gate - critical
         run: npm audit --audit-level=critical
 
+      - name: Validate Prisma schema
+        run: npx prisma validate
+        env:
+          DATABASE_URL: mysql://ci:ci@127.0.0.1:3306/sdai_ci
+
+      - name: Generate Prisma client
+        run: npm run db:generate
+        env:
+          DATABASE_URL: mysql://ci:ci@127.0.0.1:3306/sdai_ci
+
+      - name: Unified RBAC regression
+        run: npm run auth:test:unified
+
+      - name: Legacy RBAC regression
+        run: npm run auth:test
+
+      - name: Cost engine regression
+        run: npm run cost:test
+
+      - name: GAP translation regression
+        run: npm run cost:test:gap
+
       - name: Build production artifact
         run: npm run build
 
