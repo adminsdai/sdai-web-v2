@@ -108,6 +108,7 @@ model CostCapability {
   domain      String                  @db.VarChar(30)
   active      Boolean                 @default(true)
   activities CostActivityCapability[]
+  gaps       CostGap[]
 
   @@map("cost_capabilities")
 }
@@ -130,6 +131,7 @@ model CostActivity {
   capabilities       CostActivityCapability[]
   serviceActivities  CostServiceActivity[]
   executionLines     CostExecutionLine[]
+  gapRequirements    CostGapActivity[]
 
   @@index([front])
   @@map("cost_activities")
@@ -209,4 +211,39 @@ model CostExecutionLine {
   @@unique([executionId, activityId])
   @@index([activityId])
   @@map("cost_execution_lines")
+}
+
+
+//
+// MODEL-COST-001 — Translation layer GAP → CAP → ACT
+//
+
+model CostGap {
+  id              String              @id @default(uuid()) @db.VarChar(36)
+  assessmentRef   String              @db.VarChar(120)
+  capabilityId    Int
+  currentMaturity Int
+  targetMaturity  Int
+  priority        String?             @db.VarChar(20)
+  rationale       String?             @db.Text
+  status          String              @default("OPEN") @db.VarChar(20)
+  createdAt       DateTime            @default(now())
+  capability      CostCapability      @relation(fields: [capabilityId], references: [id])
+  requirements    CostGapActivity[]
+
+  @@index([assessmentRef])
+  @@index([capabilityId])
+  @@map("cost_gaps")
+}
+
+model CostGapActivity {
+  gapId       String       @db.VarChar(36)
+  activityId  Int
+  required    Boolean      @default(true)
+  rationale   String?      @db.Text
+  gap         CostGap      @relation(fields: [gapId], references: [id], onDelete: Cascade)
+  activity    CostActivity @relation(fields: [activityId], references: [id], onDelete: Cascade)
+
+  @@id([gapId, activityId])
+  @@map("cost_gap_activities")
 }
