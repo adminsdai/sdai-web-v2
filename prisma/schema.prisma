@@ -67,3 +67,146 @@ model PasskeyCredential {
   @@index([userId], map: "idx_user_id")
   @@map("passkey_credentials")
 }
+
+
+//
+// MODEL-COST-001 — Motor de Cubicación SDAI PYME
+// WORKING v0.1 — 2026-09-25
+// Catálogos gobernados separados de ejecuciones históricas.
+//
+
+model CostProfile {
+  id          Int       @id @default(autoincrement())
+  code        String    @unique @db.VarChar(30)
+  name        String    @db.VarChar(120)
+  active      Boolean   @default(true)
+  rates       CostRate[]
+  activities CostActivity[]
+
+  @@map("cost_profiles")
+}
+
+model CostRate {
+  id            Int         @id @default(autoincrement())
+  profileId     Int
+  version       String      @db.VarChar(20)
+  ufPerHour     Decimal     @db.Decimal(10, 2)
+  effectiveFrom DateTime
+  effectiveTo   DateTime?
+  active        Boolean     @default(true)
+  profile       CostProfile @relation(fields: [profileId], references: [id])
+
+  @@unique([profileId, version])
+  @@index([profileId, effectiveFrom])
+  @@map("cost_rates")
+}
+
+model CostCapability {
+  id          Int                     @id @default(autoincrement())
+  code        String                  @unique @db.VarChar(30)
+  name        String                  @db.VarChar(180)
+  domain      String                  @db.VarChar(30)
+  active      Boolean                 @default(true)
+  activities CostActivityCapability[]
+
+  @@map("cost_capabilities")
+}
+
+model CostActivity {
+  id                 Int                     @id @default(autoincrement())
+  code               String                  @unique @db.VarChar(40)
+  name               String                  @db.VarChar(200)
+  activityType       String                  @default("SPECIALIZED") @db.VarChar(20) // MASTER, SPECIALIZED
+  front              String                  @db.VarChar(40)
+  primaryProfileId   Int
+  hhT1               Decimal                 @db.Decimal(8, 2)
+  hhT2               Decimal                 @db.Decimal(8, 2)
+  hhT3               Decimal                 @db.Decimal(8, 2)
+  evidenceType       String?                 @db.VarChar(80)
+  acceptanceCriteria String?                 @db.Text
+  version            String                  @default("1.0") @db.VarChar(20)
+  active             Boolean                 @default(true)
+  primaryProfile     CostProfile             @relation(fields: [primaryProfileId], references: [id])
+  capabilities       CostActivityCapability[]
+  serviceActivities  CostServiceActivity[]
+  executionLines     CostExecutionLine[]
+
+  @@index([front])
+  @@map("cost_activities")
+}
+
+model CostActivityCapability {
+  activityId   Int
+  capabilityId Int
+  contribution String?        @db.VarChar(30) // PRIMARY, SUPPORT
+  activity     CostActivity   @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  capability   CostCapability @relation(fields: [capabilityId], references: [id], onDelete: Cascade)
+
+  @@id([activityId, capabilityId])
+  @@map("cost_activity_capabilities")
+}
+
+model CostService {
+  id         Int                   @id @default(autoincrement())
+  code       String                @unique @db.VarChar(30)
+  name       String                @db.VarChar(180)
+  version    String                @default("1.0") @db.VarChar(20)
+  active     Boolean               @default(true)
+  activities CostServiceActivity[]
+  executions CostExecution[]
+
+  @@map("cost_services")
+}
+
+model CostServiceActivity {
+  serviceId  Int
+  activityId Int
+  required   Boolean      @default(true)
+  service    CostService  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  activity   CostActivity @relation(fields: [activityId], references: [id], onDelete: Cascade)
+
+  @@id([serviceId, activityId])
+  @@map("cost_service_activities")
+}
+
+model CostExecution {
+  id              String              @id @default(uuid()) @db.VarChar(36)
+  serviceId       Int?
+  clientRef       String?             @db.VarChar(120)
+  assessmentRef   String?             @db.VarChar(120)
+  cplxOrg         String              @db.VarChar(2) // T1,T2,T3
+  cplxSrv         String              @db.VarChar(2) // T1,T2,T3
+  catalogVersion  String              @db.VarChar(30)
+  status          String              @default("DRAFT") @db.VarChar(20)
+  technicalUf     Decimal?            @db.Decimal(12, 2)
+  estimatedHh     Decimal?            @db.Decimal(10, 2)
+  createdAt       DateTime            @default(now())
+  reviewedAt      DateTime?
+  reviewer        String?             @db.VarChar(120)
+  service         CostService?        @relation(fields: [serviceId], references: [id])
+  lines           CostExecutionLine[]
+
+  @@index([assessmentRef])
+  @@map("cost_executions")
+}
+
+model CostExecutionLine {
+  id             Int           @id @default(autoincrement())
+  executionId    String        @db.VarChar(36)
+  activityId     Int
+  profileCode    String        @db.VarChar(30)
+  rateUf         Decimal       @db.Decimal(10, 2)
+  estimatedHh    Decimal       @db.Decimal(8, 2)
+  actualHh       Decimal?      @db.Decimal(8, 2)
+  technicalUf    Decimal       @db.Decimal(12, 2)
+  deviationCause String?       @db.VarChar(30)
+  deviationNote  String?       @db.Text
+  evidenceRef    String?       @db.VarChar(255)
+  observedAt     DateTime?
+  execution      CostExecution @relation(fields: [executionId], references: [id], onDelete: Cascade)
+  activity       CostActivity  @relation(fields: [activityId], references: [id])
+
+  @@unique([executionId, activityId])
+  @@index([activityId])
+  @@map("cost_execution_lines")
+}
