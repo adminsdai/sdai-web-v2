@@ -12,7 +12,8 @@
     "db:generate": "prisma generate",
     "cost:test": "node src/lib/cubicacion/engine.test.mjs",
     "cost:seed": "node prisma/seed-cost-engine.mjs",
-    "cost:test:gap": "node src/lib/cubicacion/gap-translator.test.mjs"
+    "cost:test:gap": "node src/lib/cubicacion/gap-translator.test.mjs",
+    "auth:test": "node src/lib/auth/rbac.test.mjs"
   },
   "dependencies": {
     "@prisma/client": "^6.19.3",
