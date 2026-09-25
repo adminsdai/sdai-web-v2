@@ -47,6 +47,28 @@ Este registro conserva decisiones y hallazgos para evitar que futuras reformulac
 **Decisión:** MODEL-CPLX-001 v1.1 + MODEL-EXEC-001 v1.0 constituyen el piso operacional del futuro motor de cubicación.  
 **Regla:** ningún ajuste automático de estimaciones o complejidad se realiza sin evidencia acumulada y Governance Review.
 
+## 2026-09-25 — KB-DEC-013
+**Decisión:** cerrar el laboratorio de escenarios sintéticos como fuente de nuevas capas metodológicas y avanzar a productización.  
+**Regla:** nuevas dimensiones sólo se incorporan cuando ejecución real o Governance Review demuestren su necesidad.
+
+## 2026-09-25 — KB-DEC-014
+**Decisión:** MODEL-COST-001 adopta ACT como unidad atómica de cubicación.  
+**Regla:** hallazgos y GAP no generan automáticamente servicios ni HH.
+
+## 2026-09-25 — KB-DEC-015
+**Decisión:** incorporar Actividades Maestras y reutilización de evidencia para calcular la brecha neta de intervención.  
+**Regla:** una actividad común se cubica una vez cuando el alcance y la evidencia son efectivamente compartidos; no se deduplican ejecuciones materialmente distintas.
+
+## 2026-09-25 — KB-DEC-016
+**Decisión:** separar explícitamente la salida interna del motor de la salida ejecutiva al cliente.  
+**Interna:** GAP → CAP → ACT → PRF → HH → RATE → valor técnico → evidencia.  
+**Cliente:** capacidades objetivo → intervención → resultados → roadmap → inversión comercial.
+
+## 2026-09-25 — KB-DEC-017
+**Decisión:** CS-002 queda como primera prueba de regresión del motor automático.  
+**Resultado esperado:** 72 HH y 118.62 UF de valor técnico bottom-up.  
+**Alcance:** referencia metodológica; no constituye precio comercial ni baseline estadística.
+
 ## Próxima revisión
 
 Aplicar MODEL-CPLX-001 v1.1 y MODEL-EXEC-001 v1.0 a SRV-CON-001 en casos reales. Revisar desviaciones antes de modificar umbrales, actividades o HH baseline.
