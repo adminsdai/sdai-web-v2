@@ -76,7 +76,7 @@ async function handler(req, res) {
   if (path === "/kanban" && req.method === "GET") {
     if (!can(user, "kanban:read:all") && !can(user, "kanban:read:own")) return html(res, "<h1>Acceso denegado</h1>", 403);
     const tasks = await db.task.findMany({ where: can(user, "kanban:read:all") ? {} : { assigneeId: user.id }, orderBy: { createdAt: "desc" }, take: 100 });
-    const list = tasks.filter(x => mayAccessTask(user, x, "read")).map(x => `<li>${e(x.title)} · ${e(x.status)}</li>`).join("");
+    const list = tasks.filter(x => mayAccessTask(user, x, "read")).map(x => `<li>${e(x.title)} · ${e(x.status)} ${mayAccessTask(user, x, "write") ? `<form method="post" action="/kanban/move"><input type="hidden" name="id" value="${e(x.id)}"><select name="status"><option>BACKLOG</option><option>IN_PROGRESS</option><option>BLOCKED</option><option>DONE</option></select><button>Mover</button></form>` : ""}</li>`).join("");
     const add = can(user, "kanban:write:all") || can(user, "kanban:write:own") ? `<form method="post" action="/kanban"><input name="title" placeholder="Nueva tarea" required maxlength="220"><button>Crear tarea propia</button></form>` : "";
     return html(res, layout(user, "Kanban", `<article>${add}<ul>${list}</ul></article>`));
   }
@@ -88,11 +88,36 @@ async function handler(req, res) {
     await db.auditEvent.create({ data: { actorId: user.id, action: "CREATE", entity: "Task", entityId: task.id, outcome: "SUCCESS" } });
     return redirect(res, "/kanban");
   }
+  if (path === "/kanban/move" && req.method === "POST") {
+    const fields = await form(req), id = fields.get("id"), status = fields.get("status");
+    if (!/^[0-9a-f-]{36}$/i.test(id || "") || !["BACKLOG", "IN_PROGRESS", "BLOCKED", "DONE"].includes(status)) return html(res, "<h1>Datos inválidos</h1>", 400);
+    const task = await db.task.findUnique({ where: { id } });
+    if (!task || !mayAccessTask(user, task, "write")) return html(res, "<h1>Acceso denegado</h1>", 403);
+    await db.$transaction(async tx => {
+      // Recheck assignment in the write predicate to close the read/write race.
+      const changed = await tx.task.updateMany({ where: { id, ...(can(user, "kanban:write:all") ? {} : { assigneeId: user.id }) }, data: { status } });
+      if (changed.count !== 1) throw new Error("Task assignment changed");
+      await tx.auditEvent.create({ data: { actorId: user.id, action: "MOVE", entity: "Task", entityId: id, outcome: "SUCCESS" } });
+    });
+    return redirect(res, "/kanban");
+  }
   if (path === "/privacidad" && req.method === "GET") {
     if (!mayManagePrivacy(user)) return html(res, "<h1>Acceso denegado</h1>", 403);
     const requests = await db.privacyRequest.findMany({ orderBy: { receivedAt: "desc" }, take: 100 });
     const list = requests.map(x => `<li>${e(x.requestType)} · ${e(x.requesterName)} · ${e(x.status)}</li>`).join("");
-    return html(res, layout(user, "Privacidad", `<article><p class="muted">Bandeja interna. El canal público requiere verificación del titular antes de activarse.</p><ul>${list}</ul></article>`));
+    return html(res, layout(user, "Privacidad", `<article><p class="muted">Bandeja interna. Una solicitud ingresada aquí queda pendiente de verificar; el canal público requiere verificación del titular.</p><form method="post" action="/privacidad"><select name="requestType"><option>ACCESO</option><option>RECTIFICACION</option><option>CANCELACION</option><option>OPOSICION</option><option>PORTABILIDAD</option><option>BLOQUEO</option></select><input name="name" placeholder="Nombre del solicitante" required maxlength="160"><input name="email" type="email" placeholder="Correo" required maxlength="254"><button>Registrar solicitud</button></form><ul>${list}</ul></article>`));
+  }
+  if (path === "/privacidad" && req.method === "POST") {
+    if (!mayManagePrivacy(user)) return html(res, "<h1>Acceso denegado</h1>", 403);
+    const fields = await form(req);
+    const requestType = fields.get("requestType"), requesterName = fields.get("name")?.trim(), requesterEmail = fields.get("email")?.trim().toLowerCase();
+    if (!["ACCESO", "RECTIFICACION", "CANCELACION", "OPOSICION", "PORTABILIDAD", "BLOQUEO"].includes(requestType) || !requesterName || requesterName.length > 160 || !requesterEmail || requesterEmail.length > 254 || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(requesterEmail)) return html(res, "<h1>Datos inválidos</h1>", 400);
+    await db.$transaction(async tx => {
+      const request = await tx.privacyRequest.create({ data: { requestType, requesterName, requesterEmail } });
+      await tx.privacyRequestEvent.create({ data: { requestId: request.id, type: "RECEIVED_INTERNAL", detail: "Pendiente de verificar identidad del titular" } });
+      await tx.auditEvent.create({ data: { actorId: user.id, action: "CREATE", entity: "PrivacyRequest", entityId: request.id, outcome: "SUCCESS" } });
+    });
+    return redirect(res, "/privacidad");
   }
   return html(res, "<h1>No encontrado</h1>", 404);
 }
