@@ -1,0 +1,19 @@
+{
+  "name": "sdai-portal",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --env-file=.env src/server.mjs",
+    "db:validate": "prisma validate --schema prisma/schema.prisma",
+    "db:generate": "prisma generate --schema prisma/schema.prisma",
+    "db:migrate": "prisma migrate deploy --schema prisma/schema.prisma",
+    "seed:admin": "node --env-file=.env src/bootstrap-admin.mjs",
+    "test": "node src/authorization.test.mjs && node src/session.test.mjs && node src/security.test.mjs"
+  },
+  "dependencies": {
+    "@prisma/client": "6.19.3"
+  },
+  "devDependencies": {
+    "prisma": "6.19.3"
+  }
+}
