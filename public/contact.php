@@ -190,33 +190,118 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $headers_client .= "Reply-To: contacto@sdaichile.com\r\n";
     $headers_client .= "X-Mailer: PHP/" . phpversion();
 
-    // Send emails
-    $mail_admin_sent = mail($to_admin, $subject_admin, $email_content_admin, $headers_admin);
-    $mail_client_sent = mail($email, $subject_client, $email_content_client, $headers_client);
-
-    if ($mail_admin_sent) {
-        echo json_encode([
-            'status' => 'success', 
-            'message' => 'Mensaje enviado y registrado correctamente.',
-            'db_saved' => $db_saved,
-            'client_notified' => $mail_client_sent,
-            'db_error' => !$db_saved ? 'Fallo al guardar en base de datos. Ver db_errors.log.' : ''
-        ]);
-    } else {
-        // Fallback for local testing
-        $log_file = __DIR__ . '/contact_logs.txt';
-        $log_entry = "--- " . $timestamp . " [ADMIN NOTIFICATION] ---\n" . $email_content_admin . "\n";
-        $log_entry .= "--- " . $timestamp . " [CLIENT CONFIRMATION] ---\n" . $email_content_client . "\n";
-        file_put_contents($log_file, $log_entry, FILE_APPEND);
-        
-        echo json_encode([
-            'status' => 'success', 
-            'message' => 'Mensaje procesado (Simulado localmente). Los correos se guardaron en contact_logs.txt ya que mail() no está configurado.',
-            'db_saved' => $db_saved,
-            'client_notified' => true,
-            'db_error' => !$db_saved ? 'Fallo al guardar en base de datos. Ver db_errors.log.' : ''
-        ]);
+    // SMTP autenticado: el correo es una NOTIFICACIÓN; la BD es el registro canónico.
+    function sdai_env($name, $default = null) {
+        $value = getenv($name);
+        if ($value !== false && $value !== '') return $value;
+        $paths = [__DIR__ . '/../.env', __DIR__ . '/.env'];
+        foreach ($paths as $path) {
+            if (!is_file($path)) continue;
+            foreach (file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
+                if (strpos(trim($line), '#') === 0 || strpos($line, '=') === false) continue;
+                [$key, $val] = explode('=', $line, 2);
+                if (trim($key) === $name) return trim(trim($val), "\"'");
+            }
+        }
+        return $default;
     }
+
+    function sdai_smtp_command($socket, $command, array $expected) {
+        if ($command !== null) fwrite($socket, $command . "\r\n");
+        $response = '';
+        while (($line = fgets($socket, 515)) !== false) {
+            $response .= $line;
+            if (strlen($line) < 4 || $line[3] === ' ') break;
+        }
+        $code = (int)substr($response, 0, 3);
+        if (!in_array($code, $expected, true)) {
+            throw new Exception('SMTP rechazó la operación (' . $code . ').');
+        }
+        return $response;
+    }
+
+    function sdai_smtp_send($to, $subject, $body, $replyTo = null) {
+        $host = sdai_env('SMTP_HOST', 'smtp.hostinger.com');
+        $port = (int)sdai_env('SMTP_PORT', '465');
+        $user = sdai_env('SMTP_USER');
+        $pass = sdai_env('SMTP_PASS');
+        $from = sdai_env('SMTP_FROM', $user);
+        if (!$user || !$pass || !$from) throw new Exception('SMTP no configurado.');
+
+        $transport = $port === 465 ? 'ssl://' : '';
+        $socket = @fsockopen($transport . $host, $port, $errno, $errstr, 15);
+        if (!$socket) throw new Exception('No fue posible conectar con SMTP.');
+
+        stream_set_timeout($socket, 15);
+        sdai_smtp_command($socket, null, [220]);
+        sdai_smtp_command($socket, 'EHLO sdaichile.com', [250]);
+
+        if ($port === 587) {
+            sdai_smtp_command($socket, 'STARTTLS', [220]);
+            if (!stream_socket_enable_crypto($socket, true, STREAM_CRYPTO_METHOD_TLS_CLIENT)) {
+                fclose($socket);
+                throw new Exception('No fue posible activar TLS.');
+            }
+            sdai_smtp_command($socket, 'EHLO sdaichile.com', [250]);
+        }
+
+        sdai_smtp_command($socket, 'AUTH LOGIN', [334]);
+        sdai_smtp_command($socket, base64_encode($user), [334]);
+        sdai_smtp_command($socket, base64_encode($pass), [235]);
+        sdai_smtp_command($socket, 'MAIL FROM:<' . $from . '>', [250]);
+        sdai_smtp_command($socket, 'RCPT TO:<' . $to . '>', [250, 251]);
+        sdai_smtp_command($socket, 'DATA', [354]);
+
+        $safeSubject = str_replace(["\r", "\n"], '', $subject);
+        $safeReplyTo = $replyTo ? str_replace(["\r", "\n"], '', $replyTo) : null;
+        $headers = [
+            'From: SDAI Chile <' . $from . '>',
+            'To: <' . $to . '>',
+            'Subject: ' . $safeSubject,
+            'Date: ' . date(DATE_RFC2822),
+            'Message-ID: <' . bin2hex(random_bytes(12)) . '@sdaichile.com>',
+            'MIME-Version: 1.0',
+            'Content-Type: text/plain; charset=UTF-8',
+            'Content-Transfer-Encoding: 8bit'
+        ];
+        if ($safeReplyTo) $headers[] = 'Reply-To: ' . $safeReplyTo;
+        $payload = implode("\r\n", $headers) . "\r\n\r\n" . str_replace("\n.", "\n..", str_replace("\r\n", "\n", $body));
+        fwrite($socket, str_replace("\n", "\r\n", $payload) . "\r\n.\r\n");
+        sdai_smtp_command($socket, null, [250]);
+        @fwrite($socket, "QUIT\r\n");
+        fclose($socket);
+        return true;
+    }
+
+    $mail_admin_sent = false;
+    $mail_client_sent = false;
+    $notification_error = null;
+    try {
+        $mail_admin_sent = sdai_smtp_send($to_admin, $subject_admin, $email_content_admin, $email);
+        $mail_client_sent = sdai_smtp_send($email, $subject_client, $email_content_client, 'contacto@sdaichile.com');
+    } catch (Exception $e) {
+        $notification_error = $e->getMessage();
+        @file_put_contents(__DIR__ . '/mail_errors.log', '[' . $timestamp . '] ' . $notification_error . "\n", FILE_APPEND | LOCK_EX);
+    }
+
+    if (!$db_saved) {
+        http_response_code(503);
+        echo json_encode([
+            'status' => 'error',
+            'message' => 'No pudimos registrar tu solicitud de forma segura. Por favor intenta nuevamente.',
+            'registered' => false,
+            'notification_sent' => $mail_admin_sent
+        ]);
+        exit;
+    }
+
+    echo json_encode([
+        'status' => 'success',
+        'message' => 'Tu solicitud fue registrada correctamente.',
+        'registered' => true,
+        'notification_sent' => $mail_admin_sent,
+        'client_notified' => $mail_client_sent
+    ]);
 } else {
     http_response_code(405);
     echo json_encode(['status' => 'error', 'message' => 'Método no permitido.']);
