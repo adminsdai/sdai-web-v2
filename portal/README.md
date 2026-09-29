@@ -4,7 +4,7 @@ Base aislada para el portal dinámico. El sitio Astro público continúa estáti
 
 ## Modelo
 
-- `User → Role → Permission → Session`: identidad interna y autorización. Los tokens de sesión sólo se almacenarán como hash; las sesiones se revocan al desactivar usuarios.
+- `User → Role → Permission → Session`: identidad interna y autorización. Los tokens de sesión sólo se almacenan como hash; resolver la sesión consulta el estado y los permisos vigentes, y la desactivación impide su uso de inmediato.
 - `Account → Contact / Deal`: CRM. Las operaciones consultan permiso y propietario del registro.
 - `Task`: Kanban. Las operaciones consultan permiso y asignación; un cambio de asignación exige permiso global.
 - `PrivacyRequest → PrivacyRequestEvent`: canal de titulares y expediente interno. Los solicitantes externos no reciben un `User` corporativo.
@@ -19,4 +19,4 @@ Base aislada para el portal dinámico. El sitio Astro público continúa estáti
 4. Implementar endpoints y consultas con filtro de alcance, y pruebas de 200/401/403 para CRM, Kanban, Privacidad y Motor.
 5. Verificar en las bases actuales que realmente no existen registros antes de cualquier retiro de endpoints; mantener exportación y rollback.
 
-Este primer corte entrega el modelo y reglas de alcance comprobables. Aún no ofrece login ni endpoints de producción.
+Este primer corte entrega el modelo, las reglas de alcance y el núcleo de sesión revocable, comprobados con `node portal/src/authorization.test.mjs` y `node portal/src/session.test.mjs`. Aún no ofrece login ni endpoints de producción.
