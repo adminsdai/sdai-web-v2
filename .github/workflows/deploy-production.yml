@@ -100,3 +100,18 @@ jobs:
             -e "ssh -i ~/.ssh/id_ed25519 -p $HOSTINGER_PORT" \
             dist/ "$HOSTINGER_USER@$HOSTINGER_HOST:$HOSTINGER_DEPLOY_PATH/"
           echo "SDAI production deployment completed"
+
+      - name: Verify deployed contact frontend
+        shell: bash
+        env:
+          HOSTINGER_HOST: ${{ secrets.HOSTINGER_HOST }}
+          HOSTINGER_PORT: ${{ secrets.HOSTINGER_PORT }}
+          HOSTINGER_USER: ${{ secrets.HOSTINGER_USER }}
+          HOSTINGER_DEPLOY_PATH: ${{ secrets.HOSTINGER_DEPLOY_PATH }}
+        run: |
+          set -euo pipefail
+          ssh -i ~/.ssh/id_ed25519 -p "$HOSTINGER_PORT" "$HOSTINGER_USER@$HOSTINGER_HOST" \
+            "grep -Fq '¡Solicitud registrada correctamente!' '$HOSTINGER_DEPLOY_PATH/index.html'"
+          curl -fsSL --retry 3 --retry-delay 2 "https://sdaichile.com/?deploy_check=${GITHUB_SHA}" \
+            | grep -Fq '¡Solicitud registrada correctamente!'
+          echo "Verified: public sdaichile.com serves the validated contact frontend"
