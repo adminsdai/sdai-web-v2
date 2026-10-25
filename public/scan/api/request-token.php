@@ -57,11 +57,7 @@ if ($emailDomain !== $domainRoot && !str_ends_with($emailDomain, '.' . $domainRo
 }
 
 // --- Obtener IP del solicitante ---
-$ip = $_SERVER['HTTP_CF_CONNECTING_IP']
-   ?? $_SERVER['HTTP_X_FORWARDED_FOR']
-   ?? $_SERVER['REMOTE_ADDR']
-   ?? '127.0.0.1';
-if (strpos($ip, ',') !== false) $ip = trim(explode(',', $ip)[0]);
+$ip = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0'; // No confiar en cabeceras de proxy sin verificar el proxy.
 $userAgent = substr($_SERVER['HTTP_USER_AGENT'] ?? 'unknown', 0, 500);
 
 try {
@@ -160,7 +156,7 @@ try {
 
     // --- Log en desarrollo (si mail() no está disponible localmente) ---
     if (!$mailSent) {
-        error_log("[SDAI SCAN OTP] Token para {$email} (dominio: {$domain}): {$plainToken} | Expira: {$expiresAt}");
+        error_log("[SDAI SCAN OTP] Falló la entrega del código para dominio {$domain}. No se registra el secreto OTP.");
     }
 
     echo json_encode([
@@ -168,9 +164,7 @@ try {
         'message' => "Código enviado a {$email}. Revisa tu bandeja de entrada (y spam).",
         'domain'  => $domain,
         // Solo en DEV: exponer token en log, nunca en respuesta HTTP
-        'debug'   => (getenv('APP_ENV') === 'development' || !$mailSent)
-                     ? ['note' => "mail() no configurado en local — revisa error_log del servidor PHP"]
-                     : null,
+        'debug'   => null,
     ]);
 
 } catch (Exception $e) {
