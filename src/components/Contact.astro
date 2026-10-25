@@ -19,7 +19,7 @@
 						<button type="button" id="reset-form" class="btn-text">Enviar otro mensaje</button>
 					</div>
 				</div>
-				<div class="form-fields">
+				<div class="form-fields">\n                <div class="hp-field" aria-hidden="true">\n                    <label for="website">Sitio web (dejar vacío)</label>\n                    <input type="text" id="website" name="website" tabindex="-1" autocomplete="off" />\n                </div>
 
 				<div class="form-group">
 					<label for="name">Nombre</label>
@@ -46,7 +46,7 @@
 	</div>
 </section>
 
-<style>
+<style>\n    .hp-field { position: absolute !important; left: -10000px !important; width: 1px !important; height: 1px !important; overflow: hidden !important; }
 	.contact-section {
 		background: var(--sdai-bg-soft);
 	}
