@@ -23,6 +23,28 @@ if (empty($url)) {
     exit;
 }
 
+// Sesión PHP emitida únicamente tras comprobar el OTP.
+// Nunca aceptar claves autocontenidas que no consten en el servidor.
+if ($userId === 'public_user') {
+    if (session_status() !== PHP_SESSION_ACTIVE) {
+        if (!session_start(['cookie_httponly' => true, 'cookie_secure' => true, 'cookie_samesite' => 'Lax', 'use_strict_mode' => true])) {
+            http_response_code(503);
+            echo json_encode(['error' => 'Servicio de sesión no disponible.']);
+            exit;
+        }
+    }
+    $authorized = $_SESSION['sdai_scan_auth'] ?? null;
+    if (!is_array($authorized)
+        || empty($sessionKey)
+        || !hash_equals((string)($authorized['key'] ?? ''), $sessionKey)
+        || (int)($authorized['expires'] ?? 0) < time()
+        || !hash_equals(strtolower((string)($authorized['email'] ?? '')), strtolower($authEmail))) {
+        http_response_code(401);
+        echo json_encode(['error' => 'Sesión de escaneo inválida o expirada. Verifica tu correo nuevamente.']);
+        exit;
+    }
+    $authorizedDomain = strtolower((string)($authorized['domain'] ?? ''));
+}
 // --- Para usuarios públicos (no admin), exigir session_key válida ---
 if ($userId === 'public_user' && empty($sessionKey)) {
     http_response_code(401);
@@ -37,7 +59,7 @@ if (!preg_match('/^https?:\/\//i', $url)) {
 
 // --- Si hay session_key, validar que el dominio a escanear coincida con el autorizado ---
 if ($userId === 'public_user' && !empty($authEmail)) {
-    $emailDomain = strtolower(substr($authEmail, strpos($authEmail, '@') + 1));
+    $emailDomain = $authorizedDomain;
     $parsedTarget = parse_url($url);
     $targetHost = preg_replace('/^www\./i', '', strtolower($parsedTarget['host'] ?? ''));
 

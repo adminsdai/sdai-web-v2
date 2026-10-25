@@ -123,8 +123,17 @@ try {
     $useStmt = $db->prepare("UPDATE scan_tokens SET used = 1 WHERE id = :id");
     $useStmt->execute([':id' => $row['id']]);
 
+    // Crear sesión del lado servidor, ligada al correo y dominio aprobados.
+    if (session_status() !== PHP_SESSION_ACTIVE) {
+        if (!session_start(['cookie_httponly' => true, 'cookie_secure' => true, 'cookie_samesite' => 'Lax', 'use_strict_mode' => true])) {
+            throw new Exception('No fue posible iniciar una sesión segura.');
+        }
+    }
+    session_regenerate_id(true);
+
     // --- Generar session_key temporal (UUID) ---
-    $sessionKey = Database::uuidv4();
+    $sessionKey = bin2hex(random_bytes(32));
+    $_SESSION['sdai_scan_auth'] = ['key' => $sessionKey, 'email' => $email, 'domain' => strtolower($domain), 'expires' => time() + 900];
 
     // --- Registrar consentimiento en consent_logs (NO BLOQUEA si falla) ---
     $logId = null;
