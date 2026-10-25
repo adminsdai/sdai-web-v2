@@ -5,27 +5,42 @@
  */
 
 header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, Accept');
+header('X-Content-Type-Options: nosniff');
+header('Cache-Control: no-store');
 
 /**
  * Obtiene la IP real del cliente considerando proxys/CDN (Hostinger, Cloudflare).
  * REMOTE_ADDR por sí solo suele entregar la IP del proxy, no la del visitante.
  */
 function sdai_client_ip() {
-    $candidates = [
-        $_SERVER['HTTP_CF_CONNECTING_IP'] ?? null,   // Cloudflare
-        isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? trim(explode(',', $_SERVER['HTTP_X_FORWARDED_FOR'])[0]) : null,
-        $_SERVER['HTTP_X_REAL_IP'] ?? null,
-        $_SERVER['REMOTE_ADDR'] ?? null,
-    ];
-    foreach ($candidates as $ip) {
-        if ($ip && filter_var($ip, FILTER_VALIDATE_IP)) {
-            return $ip;
-        }
-    }
-    return $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+    // Cabeceras X-Forwarded-For / CF-Connecting-IP son falsificables salvo proxy confiable.
+    return filter_var($_SERVER['REMOTE_ADDR'] ?? '', FILTER_VALIDATE_IP)
+        ? $_SERVER['REMOTE_ADDR'] : '0.0.0.0';
+}
+
+// Limitador persistente con bloqueo exclusivo, independiente de cookies y del navegador.
+// Requiere que sys_get_temp_dir() sea escribible; ante errores falla cerrado.
+function sdai_contact_rate_limit($ip) {
+    $dir = sys_get_temp_dir() . '/sdai-contact-limits';
+    if (!is_dir($dir) && !@mkdir($dir, 0700, true) && !is_dir($dir)) return false;
+    $key = hash('sha256', 'contact|' . $ip);
+    $handle = @fopen($dir . '/' . $key . '.json', 'c+');
+    if (!$handle) return false;
+    if (!flock($handle, LOCK_EX)) { fclose($handle); return false; }
+    $raw = stream_get_contents($handle);
+    $times = json_decode($raw ?: '[]', true);
+    if (!is_array($times)) $times = [];
+    $now = time();
+    $times = array_values(array_filter($times, static function ($t) use ($now) {
+        return is_int($t) && $t > $now - 900 && $t <= $now;
+    }));
+    $allowed = count($times) < 5;
+    if ($allowed) $times[] = $now;
+    rewind($handle);
+    $ok = ftruncate($handle, 0) && fwrite($handle, json_encode($times)) !== false && fflush($handle);
+    flock($handle, LOCK_UN);
+    fclose($handle);
+    return $ok && $allowed;
 }
 
 /**
@@ -74,6 +89,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $data = $_POST;
     }
 
+    // Los rechazos ocurren ANTES de escribir en BD, bitácora o enviar SMTP.
+    if (!is_array($data)) $data = [];
+    if (strlen($json) > 16384) {
+        http_response_code(413);
+        echo json_encode(['status' => 'error', 'message' => 'Solicitud demasiado extensa.']);
+        exit;
+    }
+    if (!empty($data['website'])) {
+        // Honeypot: respuesta neutra para no revelar reglas al bot.
+        echo json_encode(['status' => 'success', 'message' => 'Solicitud recibida.']);
+        exit;
+    }
+    // Check de origen cuando Origin está presente. No confiar en datos enviados en JSON.
+    $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+    if ($origin !== '' && !in_array(strtolower($origin), ['https://sdaichile.com', 'https://www.sdaichile.com'], true)) {
+        http_response_code(403);
+        echo json_encode(['status' => 'error', 'message' => 'Origen no autorizado.']);
+        exit;
+    }
+    $clientIp = sdai_client_ip();
+    if (!sdai_contact_rate_limit($clientIp)) {
+        http_response_code(429);
+        header('Retry-After: 900');
+        echo json_encode(['status' => 'error', 'message' => 'Demasiadas solicitudes. Intenta nuevamente más tarde.']);
+        exit;
+    }
+
     $name = strip_tags(trim($data['name'] ?? ''));
     $email = filter_var(trim($data['email'] ?? ''), FILTER_SANITIZE_EMAIL);
     $message = strip_tags(trim($data['message'] ?? ''));
@@ -83,6 +125,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $consentText = strip_tags(trim($data['consentText'] ?? 'Acepto la Política de Privacidad de SDAI Chile conforme a la Ley N° 21.719.'));
     // Versión exacta de la política aceptada (evidencia de QUÉ texto se consintió)
     $policyVersion = strip_tags(trim($data['policyVersion'] ?? 'no-especificada'));
+
+    // Validación estructural sin filtros lingüísticos arbitrarios que excluyan nombres reales.
+    if (strlen($name) > 120 || strlen($email) > 254 || strlen($message) > 5000
+        || strlen($name) < 2 || strlen($message) < 10
+        || preg_match('/[\\r\\n]/', $name . $email)
+        || preg_match('/[<>]/', $name)
+        || !preg_match('/[\\p{L}]/u', $name)
+        || !preg_match('/[\\p{L}]/u', $message)) {
+        http_response_code(400);
+        echo json_encode(['status' => 'error', 'message' => 'Revisa los datos ingresados y la extensión del mensaje.']);
+        exit;
+    }
 
     if (empty($name) || empty($email) || empty($message)) {
         http_response_code(400);
@@ -103,7 +157,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Evidencia técnica del acto de consentimiento
-    $ipAddress = sdai_client_ip();
+    $ipAddress = $clientIp;
     $userAgent = substr($_SERVER['HTTP_USER_AGENT'] ?? '', 0, 500);
     $originUrl = strip_tags(trim($data['pageUrl'] ?? ($_SERVER['HTTP_REFERER'] ?? '')));
     $timestampUtc = gmdate('Y-m-d\TH:i:s\Z');   // UTC explícito (no hora del servidor)
