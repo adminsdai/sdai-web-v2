@@ -5,6 +5,11 @@ header('Access-Control-Allow-Headers: Content-Type');
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') { http_response_code(204); exit; }
 
+ini_set('session.use_strict_mode', '1');
+ini_set('session.cookie_httponly', '1');
+ini_set('session.cookie_secure', '1');
+ini_set('session.cookie_samesite', 'Strict');
+session_start();
 require_once __DIR__ . '/../../lib/auth.php';
 require_once __DIR__ . '/../../lib/db.php';
 
@@ -23,36 +28,47 @@ if (empty($url)) {
     exit;
 }
 
-// --- Para usuarios públicos (no admin), exigir session_key válida ---
-if ($userId === 'public_user' && empty($sessionKey)) {
-    http_response_code(401);
-    echo json_encode(['error' => 'Acceso no autorizado. Completa el proceso de verificación por email primero.']);
-    exit;
-}
-
-// --- Normalizar URL objetivo ---
-if (!preg_match('/^https?:\/\//i', $url)) {
-    $url = 'https://' . $url;
-}
-
-// --- Si hay session_key, validar que el dominio a escanear coincida con el autorizado ---
-if ($userId === 'public_user' && !empty($authEmail)) {
-    $emailDomain = strtolower(substr($authEmail, strpos($authEmail, '@') + 1));
-    $parsedTarget = parse_url($url);
-    $targetHost = preg_replace('/^www\./i', '', strtolower($parsedTarget['host'] ?? ''));
-
-    if ($targetHost !== $emailDomain && !str_ends_with($targetHost, '.' . $emailDomain)) {
+// Autorización vinculada a la sesión PHP, al OTP y al consentimiento persistido.
+if ($userId === 'public_user') {
+    $grant = $_SESSION['scan_public'] ?? null;
+    $targetHost = strtolower(parse_url($url, PHP_URL_HOST) ?: (parse_url('https://' . $url, PHP_URL_HOST) ?: ''));
+    $targetHost = preg_replace('/^www\\./', '', $targetHost);
+    if (!is_array($grant) || !is_string($sessionKey) || strlen($sessionKey) !== 64
+        || !hash_equals($grant['key_hash'] ?? '', hash('sha256', $sessionKey))
+        || ($grant['expires'] ?? 0) < time()
+        || empty($grant['consented'])
+        || !hash_equals($grant['email'] ?? '', strtolower($authEmail))
+        || !hash_equals($grant['domain'] ?? '', $targetHost)) {
         http_response_code(403);
-        echo json_encode([
-            'error' => "Solo puedes escanear el dominio «{$emailDomain}» con el acceso autorizado para «{$authEmail}».",
-            'authorized_domain' => $emailDomain,
-            'requested_domain'  => $targetHost,
-        ]);
+        echo json_encode(['error' => 'Sesión, consentimiento o dominio no autorizado.']);
         exit;
     }
 }
-
-
+// Seguridad SSRF: solo dominios DNS públicos, sin puertos especiales ni destinos internos.
+function sdai_public_address($host) {
+    if (!preg_match('/^(?=.{1,253}$)[a-z0-9](?:[a-z0-9.-]*[a-z0-9])?$/i', $host)
+        || strpos($host, '.') === false || filter_var($host, FILTER_VALIDATE_IP)) return false;
+    $records = @dns_get_record($host, DNS_A | DNS_AAAA);
+    if (!$records) return false;
+    $ips = [];
+    foreach ($records as $rec) {
+        $ip = $rec['ip'] ?? ($rec['ipv6'] ?? null);
+        if (!$ip || !filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) return false;
+        $ips[] = $ip;
+    }
+    return $ips ? $ips[0] : false;
+}
+if (!preg_match('/^https?:\\/\\//i', $url)) $url = 'https://' . $url;
+$scanParts = parse_url($url);
+$scanHost = strtolower($scanParts['host'] ?? '');
+if (!in_array($scanParts['scheme'] ?? '', ['https', 'http'], true)
+    || isset($scanParts['user']) || isset($scanParts['pass'])
+    || isset($scanParts['port']) || !$scanHost
+    || !sdai_public_address($scanHost)) {
+    http_response_code(400);
+    echo json_encode(['error' => 'Destino de escaneo no permitido.']);
+    exit;
+}
 $startScanTime = microtime(true);
 
 try {
@@ -86,11 +102,15 @@ try {
         $allScannedPages[] = $currentUrl;
 
         $ch = curl_init();
+        $currentHost = strtolower(parse_url($currentUrl, PHP_URL_HOST) ?: '');
+        $safeIp = $currentHost === $scanHost ? sdai_public_address($currentHost) : false;
+        if (!$safeIp) continue;
+        curl_setopt($ch, CURLOPT_RESOLVE, [$currentHost . ':443:' . $safeIp, $currentHost . ':80:' . $safeIp]);
         curl_setopt($ch, CURLOPT_URL, $currentUrl);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HEADER, true);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-        curl_setopt($ch, CURLOPT_MAXREDIRS, 3);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, false); // Impide pivote por redirección a IP internas
+        curl_setopt($ch, CURLOPT_MAXREDIRS, 0);
         curl_setopt($ch, CURLOPT_TIMEOUT, 15);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
