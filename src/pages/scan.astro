@@ -654,7 +654,7 @@ import Contact from '../components/Contact.astro';
 
 			// Registrar consentimiento final en MariaDB
 			try {
-				await fetch('/scan/api/consent.php', {
+				const consentResponse = await fetch('/scan/api/consent.php', {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
 					body: JSON.stringify({
@@ -664,7 +664,8 @@ import Contact from '../components/Contact.astro';
 						policy_version: 'v1.0',
 					}),
 				});
-			} catch { /* El registro fallido no bloquea la UI */ }
+                if (!consentResponse.ok) throw new Error('No fue posible registrar el consentimiento.');
+			} catch (err) { alert('No se pudo registrar el consentimiento; verifica tu sesión e intenta nuevamente.'); if (acceptBtn) acceptBtn.disabled = false; return; }
 
 			// Ir al escáner
 			const setTxt = (id: string, val: string) => { const el = document.getElementById(id); if (el) el.textContent = val; };

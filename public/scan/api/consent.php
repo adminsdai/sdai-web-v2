@@ -15,6 +15,11 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
+ini_set('session.use_strict_mode', '1');
+ini_set('session.cookie_httponly', '1');
+ini_set('session.cookie_secure', '1');
+ini_set('session.cookie_samesite', 'Strict');
+session_start();
 require_once __DIR__ . '/../../lib/auth.php';
 require_once __DIR__ . '/../../lib/db.php';
 
@@ -28,6 +33,19 @@ $userAgent     = trim($input['user_agent']   ?? ($_SERVER['HTTP_USER_AGENT'] ?? 
 $policyVersion = trim($input['policy_version'] ?? 'v1.0');
 $email         = strtolower(trim($input['email'] ?? ''));
 
+$grant = $_SESSION['scan_public'] ?? null;
+if (!is_array($grant) || ($grant['expires'] ?? 0) < time()
+    || !hash_equals($grant['email'] ?? '', $email)
+    || !hash_equals($grant['domain'] ?? '', $urlScanned)) {
+    http_response_code(403);
+    echo json_encode(['error' => 'Verificación de correo y dominio requerida.']);
+    exit;
+}
+if ($policyVersion !== 'v1.0') {
+    http_response_code(400);
+    echo json_encode(['error' => 'Versión de política no reconocida.']);
+    exit;
+}
 // Obtener IP (Cloudflare / Proxy / Direct)
 $ip = $_SERVER['HTTP_CF_CONNECTING_IP']
    ?? $_SERVER['HTTP_X_FORWARDED_FOR']
@@ -60,6 +78,7 @@ try {
         ':policy' => $policyVersion,
     ]);
 
+    $_SESSION['scan_public']['consented'] = true;
     echo json_encode([
         'success' => true,
         'message' => 'Consentimiento registrado en MariaDB (Ley 21.719)',

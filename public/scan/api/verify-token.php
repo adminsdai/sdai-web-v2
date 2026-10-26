@@ -17,6 +17,11 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 require_once __DIR__ . '/../../lib/db.php';
+ini_set('session.use_strict_mode', '1');
+ini_set('session.cookie_httponly', '1');
+ini_set('session.cookie_secure', '1');
+ini_set('session.cookie_samesite', 'Strict');
+session_start();
 
 // --- Leer input ---
 $input    = json_decode(file_get_contents('php://input'), true) ?: [];
@@ -124,7 +129,9 @@ try {
     $useStmt->execute([':id' => $row['id']]);
 
     // --- Generar session_key temporal (UUID) ---
-    $sessionKey = Database::uuidv4();
+    $sessionKey = bin2hex(random_bytes(32));
+    session_regenerate_id(true);
+    $_SESSION['scan_public'] = ['key_hash' => hash('sha256', $sessionKey), 'email' => $email, 'domain' => $domain, 'expires' => time() + 900, 'consented' => false];
 
     // --- Registrar consentimiento en consent_logs (NO BLOQUEA si falla) ---
     $logId = null;
